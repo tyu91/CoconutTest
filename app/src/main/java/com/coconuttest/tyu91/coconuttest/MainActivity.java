@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         projection = new String[]{CalendarContract.Calendars.CALENDAR_DISPLAY_NAME
         };
 
+        //TODO: recursively resolve arguments to query string (do this in QueryUtil of privacyhelperplugin)
         String selection = "((" + CalendarContract.Calendars.ACCOUNT_NAME + " = ?) AND ("
                 + CalendarContract.Calendars.ACCOUNT_TYPE + " = ?) AND ("
                 + CalendarContract.Calendars.OWNER_ACCOUNT + " = ?))";
