@@ -1,18 +1,8 @@
 package com.coconuttest.tyu91.coconuttest;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.provider.CalendarContract;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
-import me.tianshili.annotationlib.calendar.CalendarAnnotation;
-import me.tianshili.annotationlib.calendar.CalendarDataType;
-import me.tianshili.annotationlib.calendar.CalendarPurpose;
-import me.tianshili.annotationlib.commons.*;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 
 public class CalendarTestActivity extends AppCompatActivity {
 
@@ -20,11 +10,16 @@ public class CalendarTestActivity extends AppCompatActivity {
     private String[] projection;
     private String selection;
     private String androidID;
+    private RecyclerView rvCalendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_test);
+
+//        recycleV = findViewById(R.id.rvRecycle);
+//        recycleV.setLayoutManager(new LinearLayoutManager(this));
+//        recycleV.setAdapter(adapterD);
 
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
 //            // TODO: Consider calling

@@ -23,9 +23,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        calendarBtn = findViewById(R.id.calendarBtn);
-
         //go to calendar test activity
+        calendarBtn = findViewById(R.id.calendarBtn);
         calendarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
