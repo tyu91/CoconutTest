@@ -5,11 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-<Button
-    android:id="@+id/calendarBtn"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/calendar_test_activity"
-    android:layout_centerInParent="true"/>
 
+    <Button
+        android:id="@+id/calendarBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/calendar_test_activity" />
+
+    <Button
+        android:id="@+id/contactsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/contacts_test_activity"
+        android:layout_below="@id/calendarBtn"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

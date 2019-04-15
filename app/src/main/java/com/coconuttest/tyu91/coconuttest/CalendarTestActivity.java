@@ -18,7 +18,6 @@ import me.tianshili.annotationlib.calendar.CalendarPurpose;
 import me.tianshili.annotationlib.commons.Visibility;
 
 public class CalendarTestActivity extends AppCompatActivity {
-
     private int MY_PERMISSIONS_REQUEST_READ_CALENDAR = 1;
     private int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR = 2;
     private String[] projection;
@@ -38,10 +37,6 @@ public class CalendarTestActivity extends AppCompatActivity {
         rvCalendar.setAdapter(calendarTestAdapter);
         rvCalendar.setLayoutManager(new LinearLayoutManager(this));
 
-        calendarResults.add("dummy1");
-        calendarResults.add("dummy2");
-        calendarTestAdapter.notifyDataSetChanged();
-
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_CALENDAR}, MY_PERMISSIONS_REQUEST_WRITE_CALENDAR);
@@ -53,7 +48,11 @@ public class CalendarTestActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.READ_CALENDAR},
                     MY_PERMISSIONS_REQUEST_READ_CALENDAR);
         }
-        projection = new String[] { CalendarContract.Events.CALENDAR_DISPLAY_NAME};
+        projection = new String[] { CalendarContract.Events.CALENDAR_DISPLAY_NAME,
+        CalendarContract.Events.TITLE,
+        CalendarContract.Events.EVENT_LOCATION,
+        CalendarContract.Events.DTSTART,
+        CalendarContract.Events.DTEND};
 
 //        //TODO: recursively resolve arguments to query string (do this in QueryUtil of privacyhelperplugin)
         String selection = "((" + CalendarContract.Calendars.ACCOUNT_NAME + " = ?) AND ("
@@ -64,22 +63,21 @@ public class CalendarTestActivity extends AppCompatActivity {
         String selectionPrime = "((" + CalendarContract.Calendars.ACCOUNT_NAME + " = ?) AND ("
                 + CalendarContract.Attendees.ATTENDEE_EMAIL + " = ?) AND ("
                 + CalendarContract.Calendars.OWNER_ACCOUNT + " = ?))";
-
+        
         @CalendarAnnotation(
-                purpose = {CalendarPurpose.schedule},
-                purposeDescription = {"Dummy variable to test"},
-                dataType = {CalendarDataType.EVENT_TITLE},
+                purpose = {CalendarPurpose.UNKNOWN},
+                purposeDescription = {""},
+                dataType = {CalendarDataType.UNKNOWN},
                 visibility = {Visibility.UNKNOWN})
         Cursor c;
 
         c = this.getBaseContext().getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, null, null, null);
-        c.moveToFirst();
-        int numIter = c.getCount();
 
-        for(int i = 0; i < numIter; i++){
-            c.getInt(0);
-            c.moveToNext();
+        while (c.moveToNext()) {
+            calendarResults.add(c.getString(1));
         }
+        c.close();
 
     }
+
 }

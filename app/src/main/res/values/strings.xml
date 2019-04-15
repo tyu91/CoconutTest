@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CoconutTest</string>
     <string name="calendar_test_activity">Calendar Test Activity</string>
+    <string name="contacts_test_activity">Contacts Test Activity</string>
 </resources>

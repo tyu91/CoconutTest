@@ -17,6 +17,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     Button calendarBtn;
+    Button contactsBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent calendarActivityIntent = new Intent(MainActivity.this, CalendarTestActivity.class);
                 startActivity(calendarActivityIntent);
+                finish();
+            }
+        });
+
+        //go to contacts test activity
+        contactsBtn = findViewById(R.id.contactsBtn);
+        contactsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent contactsActivityIntent = new Intent(MainActivity.this, ContactsTestActivity.class);
+                startActivity(contactsActivityIntent);
                 finish();
             }
         });
