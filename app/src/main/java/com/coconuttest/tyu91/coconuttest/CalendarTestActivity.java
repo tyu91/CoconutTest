@@ -3,6 +3,7 @@ package com.coconuttest.tyu91.coconuttest;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
@@ -54,7 +55,12 @@ public class CalendarTestActivity extends AppCompatActivity {
         CalendarContract.Events.DTSTART,
         CalendarContract.Events.DTEND};
 
-//        //TODO: recursively resolve arguments to query string (do this in QueryUtil of privacyhelperplugin)
+        String[] projection1 = projection;
+
+        String[] projection2 = projection1;
+
+        //TODO: recursively resolve arguments to query string (do this in QueryUtil of privacyhelperplugin), i.e. StringBuilder or StringBuffer methods of constructing
+        //TODO: include example of UriBuilder in project
         String selection = "((" + CalendarContract.Calendars.ACCOUNT_NAME + " = ?) AND ("
                 + CalendarContract.Attendees.ATTENDEE_EMAIL + " = ?) AND ("
                 + CalendarContract.Events.TITLE + " = ?) AND ("
@@ -63,15 +69,17 @@ public class CalendarTestActivity extends AppCompatActivity {
         String selectionPrime = "((" + CalendarContract.Calendars.ACCOUNT_NAME + " = ?) AND ("
                 + CalendarContract.Attendees.ATTENDEE_EMAIL + " = ?) AND ("
                 + CalendarContract.Calendars.OWNER_ACCOUNT + " = ?))";
-        
+
+
+
         @CalendarAnnotation(
                 purpose = {CalendarPurpose.UNKNOWN},
                 purposeDescription = {""},
-                dataType = {CalendarDataType.UNKNOWN},
-                visibility = {Visibility.UNKNOWN})
+                dataType = {CalendarDataType.EVENT_TITLE, CalendarDataType.EVENT_TIME},
+                visibility = {Visibility.IN_BACKGROUND})
         Cursor c;
 
-        c = this.getBaseContext().getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, null, null, null);
+        c = this.getBaseContext().getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection2, null, null, null);
 
         while (c.moveToNext()) {
             calendarResults.add(c.getString(1));
