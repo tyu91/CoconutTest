@@ -73,74 +73,6 @@ public class ContactsTestActivity extends AppCompatActivity {
             }
         }
 
-        String[] projectionSms = new String[] {
-                Telephony.BaseMmsColumns.SEEN,
-                Telephony.BaseMmsColumns.CONTENT_LOCATION,
-                Telephony.BaseMmsColumns.CREATOR,
-                Telephony.BaseMmsColumns.DATE,
-                Telephony.BaseMmsColumns.DATE_SENT,
-                Telephony.BaseMmsColumns.DELIVERY_TIME,
-                Telephony.BaseMmsColumns.MESSAGE_ID,
-                Telephony.BaseMmsColumns.READ,
-                Telephony.BaseMmsColumns.READ_STATUS,
-                Telephony.BaseMmsColumns.RESPONSE_STATUS,
-                Telephony.BaseMmsColumns.RESPONSE_TEXT,
-                Telephony.BaseMmsColumns.READ_REPORT,
-                Telephony.BaseMmsColumns.RETRIEVE_TEXT,
-                Telephony.BaseMmsColumns.RETRIEVE_TEXT_CHARSET,
-                Telephony.BaseMmsColumns.SUBJECT,
-                Telephony.BaseMmsColumns.SUBJECT_CHARSET,
-                Telephony.BaseMmsColumns.MESSAGE_BOX,
-
-                Telephony.CanonicalAddressesColumns.ADDRESS,
-
-                Telephony.Mms.SEEN,
-                Telephony.Mms.CONTENT_LOCATION,
-                Telephony.Mms.CREATOR,
-                Telephony.Mms.DATE,
-                Telephony.Mms.DATE_SENT,
-                Telephony.Mms.DELIVERY_TIME,
-                Telephony.Mms.MESSAGE_ID,
-                Telephony.Mms.READ,
-                Telephony.Mms.READ_STATUS,
-                Telephony.Mms.RESPONSE_STATUS,
-                Telephony.Mms.RESPONSE_TEXT,
-                Telephony.Mms.READ_REPORT,
-                Telephony.Mms.RETRIEVE_TEXT,
-                Telephony.Mms.RETRIEVE_TEXT_CHARSET,
-                Telephony.Mms.SUBJECT,
-                Telephony.Mms.SUBJECT_CHARSET,
-                Telephony.Mms.MESSAGE_BOX,
-
-                String.valueOf(Telephony.MmsSms.CONTENT_CONVERSATIONS_URI),
-                String.valueOf(Telephony.MmsSms.SEARCH_URI),
-                String.valueOf(Telephony.MmsSms.CONTENT_CONVERSATIONS_URI),
-                String.valueOf(Telephony.MmsSms.CONTENT_DRAFT_URI),
-                String.valueOf(Telephony.MmsSms.CONTENT_FILTER_BYPHONE_URI),
-                String.valueOf(Telephony.MmsSms.CONTENT_LOCKED_URI),
-                String.valueOf(Telephony.MmsSms.CONTENT_UNDELIVERED_URI),
-                String.valueOf(Telephony.MmsSms.CONTENT_URI),
-
-                Telephony.Sms.SEEN,
-                Telephony.Sms.CREATOR,
-                Telephony.Sms.DATE,
-                Telephony.Sms.DATE_SENT,
-                Telephony.Sms.READ,
-                Telephony.Sms.SUBJECT,
-
-                Telephony.TextBasedSmsColumns.SEEN,
-                Telephony.TextBasedSmsColumns.CREATOR,
-                Telephony.TextBasedSmsColumns.DATE,
-                Telephony.TextBasedSmsColumns.DATE_SENT,
-                Telephony.TextBasedSmsColumns.READ,
-                Telephony.TextBasedSmsColumns.SUBJECT,
-                Telephony.TextBasedSmsColumns.BODY,
-
-                Telephony.Threads.DATE,
-
-
-        };
-
         String[] projection = new String[] {
 //                ContactsContract.Data.RAW_CONTACT_ID,
 //                ContactsContract.Data._ID,
@@ -220,15 +152,7 @@ public class ContactsTestActivity extends AppCompatActivity {
         d.close();
 
 
-//        @SMSAnnotation(
-//                purpose = {SMSPurpose.UNKNOWN},
-//                purposeDescription = {""},
-//                dataType = {SMSDataType.STATUS, SMSDataType.LOCATION, SMSDataType.CREATOR, SMSDataType.DATE_AND_TIME, SMSDataType.MESSAGES, SMSDataType.ADDRESS, SMSDataType.THREADS},
-//                visibility = {Visibility.UNKNOWN})
-//        Cursor e;
-//
-//        e = this.getBaseContext().getContentResolver().query(Uri.parse("content://sms/inbox"), projectionSms, null, null, null);
-//
+
 //        @CallLogsAnnotation(
 //                purpose = {CallLogsPurpose.UNKNOWN},
 //                purposeDescription = {""},
