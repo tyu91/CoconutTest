@@ -11,6 +11,7 @@ public class MainActivity extends AppCompatActivity {
     Button calendarBtn;
     Button contactsBtn;
     Button smsBtn;
+    Button calllogsBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent smsActivityIntent = new Intent(MainActivity.this, SmsTestActivity.class);
                 startActivity(smsActivityIntent);
+                finish();
+            }
+        });
+
+        //go to call logs test activity
+        smsBtn = findViewById(R.id.callLogsBtn);
+        smsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent callLogsActivityIntent = new Intent(MainActivity.this, CallLogsTestActivity.class);
+                startActivity(callLogsActivityIntent);
                 finish();
             }
         });

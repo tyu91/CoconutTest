@@ -3,4 +3,5 @@
     <string name="calendar_test_activity">Calendar Test Activity</string>
     <string name="contacts_test_activity">Contacts Test Activity</string>
     <string name="sms_test_activity">SMS Test Activity</string>
+    <string name="calllogs_test_activity">Call Logs Test Activity</string>
 </resources>

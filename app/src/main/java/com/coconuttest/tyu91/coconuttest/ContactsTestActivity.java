@@ -121,17 +121,6 @@ public class ContactsTestActivity extends AppCompatActivity {
 
         };
 
-//        String[] projectionCallLog = new String[]{
-//                CallLog.Calls.getLastOutgoingCall(this),
-//                CallLog.Calls.CACHED_NAME,
-//                CallLog.Calls.DATE,
-//                CallLog.Calls.DURATION,
-//                CallLog.Calls.NUMBER,
-//                CallLog.Calls.VOICEMAIL_URI,
-//                CallLog.Calls.TRANSCRIPTION
-//        };
-
-
 
         @ContactsAnnotation(
                 purpose = {ContactsPurpose.UNKNOWN},
@@ -150,16 +139,6 @@ public class ContactsTestActivity extends AppCompatActivity {
             contactsResults.add(d.getString(0));
         }
         d.close();
-
-
-
-//        @CallLogsAnnotation(
-//                purpose = {CallLogsPurpose.UNKNOWN},
-//                purposeDescription = {""},
-//                dataType = {CallLogsDataType.LAST_OUTGOING_CALL, CallLogsDataType.CACHED_DATA, CallLogsDataType.DATE, CallLogsDataType.DURATION, CallLogsDataType.VOICEMAIL_DATA},
-//                visibility = {Visibility.UNKNOWN})
-//        Cursor f;
-//        f = this.getBaseContext().getContentResolver().query(CallLog.Calls.CONTENT_URI, projectionCallLog, null, null, null);
 
     }
 

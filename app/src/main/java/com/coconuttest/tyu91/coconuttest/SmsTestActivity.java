@@ -3,6 +3,7 @@ package com.coconuttest.tyu91.coconuttest;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.Telephony;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -113,12 +114,11 @@ public class SmsTestActivity extends AppCompatActivity {
         @SMSAnnotation(
                 purpose = {SMSPurpose.UNKNOWN},
                 purposeDescription = {""},
-                dataType = {SMSDataType.STATUS, SMSDataType.LOCATION, SMSDataType.CREATOR, SMSDataType.DATE_AND_TIME, SMSDataType.MESSAGES, SMSDataType.ADDRESS, SMSDataType.THREADS},
+                dataType = {SMSDataType.CREATOR, SMSDataType.MESSAGES},
                 visibility = {Visibility.UNKNOWN})
-        Cursor e;
+        Cursor cursor;
 
-//        e = this.getBaseContext().getContentResolver().query(Uri.parse("content://sms/inbox"), projectionSms, null, null, null);
-        e = this.getBaseContext().getContentResolver().query(
+        cursor = this.getBaseContext().getContentResolver().query(
                 Telephony.Sms.CONTENT_URI,
                 projectionSms,
                 null,
@@ -126,10 +126,20 @@ public class SmsTestActivity extends AppCompatActivity {
                 null);
 
         //prints sms body text and formats in recycler view
-        while (e.moveToNext()) {
-            smsResults.add(e.getString(1));
+        while (cursor.moveToNext()) {
+            smsResults.add(cursor.getString(1));
         }
-        e.close();
+        cursor.close();
+
+        @SMSAnnotation(
+                purpose = {SMSPurpose.UNKNOWN},
+                purposeDescription = {""},
+                dataType = {SMSDataType.UNKNOWN},
+                visibility = {Visibility.UNKNOWN})
+        Cursor uriCursor;
+
+        uriCursor = this.getBaseContext().getContentResolver().query(Uri.parse("content://sms/inbox"), projectionSms, null, null, null);
+
     }
 
 
