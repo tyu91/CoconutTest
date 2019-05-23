@@ -30,12 +30,14 @@ public class SmsTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sms_test);
 
+        //set up SMS recycler view and adapter
         smsResults = new ArrayList<String>();
         rvSms = findViewById(R.id.rvSms);
         smsTestAdapter = new SmsTestAdapter(smsResults);
         rvSms.setAdapter(smsTestAdapter);
         rvSms.setLayoutManager(new LinearLayoutManager(this));
 
+        //set up SMS permission request
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(this,
@@ -43,6 +45,7 @@ public class SmsTestActivity extends AppCompatActivity {
                     MY_PERMISSIONS_REQUEST_READ_SMS);
         }
 
+        //define projection query field
         String[] projectionSms = new String[]{
 //                Telephony.BaseMmsColumns.SEEN,
 //                Telephony.BaseMmsColumns.CONTENT_LOCATION,
@@ -118,6 +121,7 @@ public class SmsTestActivity extends AppCompatActivity {
                 visibility = {Visibility.UNKNOWN})
         Cursor cursor;
 
+        //query for SMS results
         cursor = this.getBaseContext().getContentResolver().query(
                 Telephony.Sms.CONTENT_URI,
                 projectionSms,
@@ -125,19 +129,14 @@ public class SmsTestActivity extends AppCompatActivity {
                 null,
                 null);
 
-        //prints sms body text and formats in recycler view
+        //populate SMS recycler view with query results
         while (cursor.moveToNext()) {
             smsResults.add(cursor.getString(1));
         }
         cursor.close();
 
-        @SMSAnnotation(
-                purpose = {SMSPurpose.UNKNOWN},
-                purposeDescription = {""},
-                dataType = {SMSDataType.UNKNOWN},
-                visibility = {Visibility.UNKNOWN})
+        //TODO: figure out a way to parse Uri.parse instead of CONTENT_URI
         Cursor uriCursor;
-
         uriCursor = this.getBaseContext().getContentResolver().query(Uri.parse("content://sms/inbox"), projectionSms, null, null, null);
 
     }
