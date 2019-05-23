@@ -8,6 +8,9 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
+    //TODO: add back buttons for each test activity back to this main activity
+    //TODO: app crashes initially if permissions not enabled. This behavior is expected; for now let the app crash, give permission, and reopen app.
+
     Button calendarBtn;
     Button contactsBtn;
     Button smsBtn;
@@ -52,8 +55,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //go to call logs test activity
-        smsBtn = findViewById(R.id.callLogsBtn);
-        smsBtn.setOnClickListener(new View.OnClickListener() {
+        calllogsBtn = findViewById(R.id.callLogsBtn);
+        calllogsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent callLogsActivityIntent = new Intent(MainActivity.this, CallLogsTestActivity.class);
