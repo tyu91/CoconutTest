@@ -37,13 +37,6 @@ public class CalendarTestAdapter extends RecyclerView.Adapter<CalendarTestAdapte
     @Override
     public void onBindViewHolder(@NonNull CalendarTestAdapter.ViewHolder viewHolder, int i) {
         viewHolder.tvCalendarItem.setText(mCalendarResults.get(i));
-//        // Get the data model based on position
-//        String calendarString = mCalendarResults.get(i);
-//
-//        // Set item views based on your views and data model
-//        TextView tvCalendarItem = viewHolder.tvCalendarItem;
-//
-//        tvCalendarItem.setText(calendarString);
 
     }
 

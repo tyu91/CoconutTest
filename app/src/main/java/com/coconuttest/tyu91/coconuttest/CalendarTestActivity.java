@@ -32,6 +32,8 @@ public class CalendarTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_test);
 
+
+        //set up Calendar recycler view and adapter
         calendarResults = new ArrayList<String>();
         rvCalendar = findViewById(R.id.rvCalendar);
         calendarTestAdapter = new CalendarTestAdapter(calendarResults);
@@ -39,6 +41,7 @@ public class CalendarTestActivity extends AppCompatActivity {
         rvCalendar.setLayoutManager(new LinearLayoutManager(this));
 
 
+        //set up Calendar permission request
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_CALENDAR}, MY_PERMISSIONS_REQUEST_WRITE_CALENDAR);
         }
@@ -49,6 +52,8 @@ public class CalendarTestActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.READ_CALENDAR},
                     MY_PERMISSIONS_REQUEST_READ_CALENDAR);
         }
+
+        //define projection and selection fields
         projection = new String[] { CalendarContract.Events.CALENDAR_DISPLAY_NAME,
         CalendarContract.Events.TITLE,
         CalendarContract.Events.EVENT_LOCATION,
@@ -60,7 +65,6 @@ public class CalendarTestActivity extends AppCompatActivity {
         String[] projection2 = projection1;
 
         //TODO: recursively resolve arguments to query string (do this in QueryUtil of privacyhelperplugin), i.e. StringBuilder or StringBuffer methods of constructing
-        //TODO: include example of UriBuilder in project
         String selection = "((" + CalendarContract.Calendars.ACCOUNT_NAME + " = ?) AND ("
                 + CalendarContract.Attendees.ATTENDEE_EMAIL + " = ?) AND ("
                 + CalendarContract.Events.TITLE + " = ?) AND ("
@@ -71,7 +75,6 @@ public class CalendarTestActivity extends AppCompatActivity {
                 + CalendarContract.Calendars.OWNER_ACCOUNT + " = ?))";
 
 
-
         @CalendarAnnotation(
                 purpose = {CalendarPurpose.UNKNOWN},
                 purposeDescription = {""},
@@ -79,8 +82,10 @@ public class CalendarTestActivity extends AppCompatActivity {
                 visibility = {Visibility.IN_BACKGROUND})
         Cursor c;
 
+        //query for calendar results
         c = this.getBaseContext().getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection2, null, null, null);
 
+        //populate Calendar recycler view with query results
         while (c.moveToNext()) {
             calendarResults.add(c.getString(1));
         }
