@@ -40,6 +40,7 @@ public class ContactsTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts_test);
 
+        //set up Contacts recycler view and adapter
         contactsResults = new ArrayList<String>();
         rvContacts = findViewById(R.id.rvContacts);
         contactsTestAdapter = new ContactsTestAdapter(contactsResults);
@@ -47,6 +48,7 @@ public class ContactsTestActivity extends AppCompatActivity {
         rvContacts.setLayoutManager(new LinearLayoutManager(this));
 
 
+        //set up SMS permission requests
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.WRITE_CONTACTS)) {
@@ -73,6 +75,7 @@ public class ContactsTestActivity extends AppCompatActivity {
             }
         }
 
+        //define projection query field
         String[] projection = new String[] {
 //                ContactsContract.Data.RAW_CONTACT_ID,
 //                ContactsContract.Data._ID,
@@ -129,6 +132,7 @@ public class ContactsTestActivity extends AppCompatActivity {
                 visibility = {Visibility.UNKNOWN})
         Cursor d;
 
+        //query for Contacts results
         d = this.getBaseContext().getContentResolver().query(
                 ContactsContract.Contacts.CONTENT_URI,
                 projection,
@@ -142,6 +146,7 @@ public class ContactsTestActivity extends AppCompatActivity {
 
     }
 
+    //Contacts requires additional permissions code to work properly
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
