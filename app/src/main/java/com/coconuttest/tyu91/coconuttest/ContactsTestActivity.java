@@ -16,16 +16,6 @@ import android.os.Build;
 
 import java.util.ArrayList;
 
-import me.tianshili.annotationlib.calllogs.CallLogsAnnotation;
-import me.tianshili.annotationlib.calllogs.CallLogsDataType;
-import me.tianshili.annotationlib.calllogs.CallLogsPurpose;
-import me.tianshili.annotationlib.commons.Visibility;
-import me.tianshili.annotationlib.contacts.ContactsAnnotation;
-import me.tianshili.annotationlib.contacts.ContactsDataType;
-import me.tianshili.annotationlib.contacts.ContactsPurpose;
-import me.tianshili.annotationlib.sms.SMSAnnotation;
-import me.tianshili.annotationlib.sms.*;
-
 public class ContactsTestActivity extends AppCompatActivity {
     private final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
     private final int MY_PERMISSIONS_REQUEST_WRITE_CONTACTS = 2;
@@ -124,12 +114,6 @@ public class ContactsTestActivity extends AppCompatActivity {
 
         };
 
-
-        @ContactsAnnotation(
-                purpose = {ContactsPurpose.UNKNOWN},
-                purposeDescription = {""},
-                dataType = {ContactsDataType.DISPLAY_NAME},
-                visibility = {Visibility.UNKNOWN})
         Cursor d;
 
         //query for Contacts results

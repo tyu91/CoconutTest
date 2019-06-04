@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     Button contactsBtn;
     Button smsBtn;
     Button calllogsBtn;
+    Button microphoneBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent callLogsActivityIntent = new Intent(MainActivity.this, CallLogsTestActivity.class);
                 startActivity(callLogsActivityIntent);
+                finish();
+            }
+        });
+
+        microphoneBtn = findViewById(R.id.microphoneBtn);
+        microphoneBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent microphoneActivityIntent = new Intent(MainActivity.this, MicrophoneTestActivity.class);
+                startActivity(microphoneActivityIntent);
                 finish();
             }
         });

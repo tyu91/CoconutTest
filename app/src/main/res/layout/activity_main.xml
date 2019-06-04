@@ -30,10 +30,18 @@
         android:layout_centerHorizontal="true"/>
 
     <Button
-    android:id="@+id/callLogsBtn"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/calllogs_test_activity"
-    android:layout_below="@id/smsBtn"
-    android:layout_centerHorizontal="true"/>
+        android:id="@+id/callLogsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/calllogs_test_activity"
+        android:layout_below="@id/smsBtn"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:id="@+id/microphoneBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/microphone_test_activity"
+        android:layout_below="@id/callLogsBtn"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

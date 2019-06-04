@@ -12,11 +12,6 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import me.tianshili.annotationlib.calllogs.CallLogsAnnotation;
-import me.tianshili.annotationlib.calllogs.CallLogsDataType;
-import me.tianshili.annotationlib.calllogs.CallLogsPurpose;
-import me.tianshili.annotationlib.commons.Visibility;
-
 public class CallLogsTestActivity extends AppCompatActivity {
     private int MY_PERMISSIONS_REQUEST_READ_CALL_LOGS = 1;
     private RecyclerView rvCallLogs;
@@ -54,11 +49,6 @@ public class CallLogsTestActivity extends AppCompatActivity {
 //                CallLog.Calls.TRANSCRIPTION
         };
 
-        @CallLogsAnnotation(
-                purpose = {CallLogsPurpose.UNKNOWN},
-                purposeDescription = {""},
-                dataType = {CallLogsDataType.CACHED_DATA, CallLogsDataType.NUMBER},
-                visibility = {Visibility.UNKNOWN})
         Cursor f;
 
         //query call logs for results
