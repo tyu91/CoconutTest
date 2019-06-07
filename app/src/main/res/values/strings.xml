@@ -6,7 +6,9 @@
     <string name="calllogs_test_activity">Call Logs Test Activity</string>
     <string name="media_recorder_test_activity">Media Recorder Test Activity</string>
     <string name="audio_record_test_activity">Audio Record Test Activity</string>
-    <string name="start_recording">Start Recording</string>
+    <string name="start_recording_with_media_recorder">Start Recording With MediaRecorder</string>
+    <string name="start_recording_with_audio_record">Start Recording With AudioRecord</string>
+    <string name="start_recording_with_intent">Start Recording With Intent</string>
     <string name="stop_recording">Stop Recording</string>
     <string name="play">Play</string>
     <string name="stop_playing">Stop Playing</string>
