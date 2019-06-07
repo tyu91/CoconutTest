@@ -27,8 +27,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MicrophoneTestActivity">
+            <!--<intent-filter>
+                <action android:name="android.provider.MediaStore.RECORD_SOUND" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>-->
+        </activity>
         <activity android:name=".CalendarTestActivity" />
-        <activity android:name=".MicrophoneTestActivity" />
     </application>
 
 </manifest>

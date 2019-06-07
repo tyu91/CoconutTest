@@ -38,10 +38,10 @@
         android:layout_centerHorizontal="true"/>
 
     <Button
-        android:id="@+id/microphoneBtn"
+        android:id="@+id/mediaRecorderBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/microphone_test_activity"
+        android:text="@string/media_recorder_test_activity"
         android:layout_below="@id/callLogsBtn"
         android:layout_centerHorizontal="true"/>
 </RelativeLayout>

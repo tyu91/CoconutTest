@@ -14,8 +14,9 @@ public class MainActivity extends AppCompatActivity {
     Button calendarBtn;
     Button contactsBtn;
     Button smsBtn;
-    Button calllogsBtn;
-    Button microphoneBtn;
+    Button callLogsBtn;
+    Button mediaRecorderBtn;
+    Button audioRecordBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //go to call logs test activity
-        calllogsBtn = findViewById(R.id.callLogsBtn);
-        calllogsBtn.setOnClickListener(new View.OnClickListener() {
+        callLogsBtn = findViewById(R.id.callLogsBtn);
+        callLogsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent callLogsActivityIntent = new Intent(MainActivity.this, CallLogsTestActivity.class);
@@ -66,18 +67,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        microphoneBtn = findViewById(R.id.microphoneBtn);
-        microphoneBtn.setOnClickListener(new View.OnClickListener() {
+        //go to media recorder test activity
+        mediaRecorderBtn = findViewById(R.id.mediaRecorderBtn);
+        mediaRecorderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent microphoneActivityIntent = new Intent(MainActivity.this, MicrophoneTestActivity.class);
-                startActivity(microphoneActivityIntent);
+                Intent mediaRecorderActivityIntent = new Intent(MainActivity.this, MicrophoneTestActivity.class);
+                startActivity(mediaRecorderActivityIntent);
                 finish();
             }
         });
-
-
-
-
     }
 }
