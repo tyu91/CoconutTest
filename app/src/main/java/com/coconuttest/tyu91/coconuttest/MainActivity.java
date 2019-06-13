@@ -11,12 +11,7 @@ public class MainActivity extends AppCompatActivity {
     //TODO: add back buttons for each test activity back to this main activity
     //TODO: app crashes initially if permissions not enabled. This behavior is expected; for now let the app crash, give permission, and reopen app.
 
-    Button calendarBtn;
-    Button contactsBtn;
-    Button smsBtn;
-    Button callLogsBtn;
-    Button mediaRecorderBtn;
-    Button audioRecordBtn;
+    Button calendarBtn, contactsBtn, smsBtn, callLogsBtn, microphoneBtn, camera2Btn, cameraByIntentBtn, recordVideoBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
         calendarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent calendarActivityIntent = new Intent(MainActivity.this, CalendarTestActivity.class);
-                startActivity(calendarActivityIntent);
+                Intent intent = new Intent(MainActivity.this, CalendarTestActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -39,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
         contactsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent contactsActivityIntent = new Intent(MainActivity.this, ContactsTestActivity.class);
-                startActivity(contactsActivityIntent);
+                Intent intent = new Intent(MainActivity.this, ContactsTestActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -50,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
         smsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent smsActivityIntent = new Intent(MainActivity.this, SmsTestActivity.class);
-                startActivity(smsActivityIntent);
+                Intent intent = new Intent(MainActivity.this, SmsTestActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -61,19 +56,52 @@ public class MainActivity extends AppCompatActivity {
         callLogsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent callLogsActivityIntent = new Intent(MainActivity.this, CallLogsTestActivity.class);
-                startActivity(callLogsActivityIntent);
+                Intent intent = new Intent(MainActivity.this, CallLogsTestActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
 
-        //go to media recorder test activity
-        mediaRecorderBtn = findViewById(R.id.mediaRecorderBtn);
-        mediaRecorderBtn.setOnClickListener(new View.OnClickListener() {
+        //go to microphone test activity
+        microphoneBtn = findViewById(R.id.microphoneBtn);
+        microphoneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent mediaRecorderActivityIntent = new Intent(MainActivity.this, MicrophoneTestActivity.class);
-                startActivity(mediaRecorderActivityIntent);
+                Intent intent = new Intent(MainActivity.this, MicrophoneTestActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        //go to camera2 test activity
+        camera2Btn = findViewById(R.id.cameraBtn);
+        camera2Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Camera2APITestActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        //go to camera by intent test activity
+        cameraByIntentBtn = findViewById(R.id.cameraByIntentBtn);
+        cameraByIntentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CameraByIntentTestActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        //go to video recording test activity
+        recordVideoBtn = findViewById(R.id.recordVideoBtn);
+        recordVideoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, VideoRecordingTestActivity.class);
+                startActivity(intent);
                 finish();
             }
         });

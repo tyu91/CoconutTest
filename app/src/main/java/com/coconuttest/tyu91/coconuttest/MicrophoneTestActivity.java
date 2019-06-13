@@ -1,5 +1,6 @@
 package com.coconuttest.tyu91.coconuttest;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -115,7 +116,12 @@ public class MicrophoneTestActivity extends AppCompatActivity implements MediaPl
             disableAllButtons();
             try {
                 Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-                startActivityForResult(intent, RECORD_REQUEST);
+                startActivityForResult(intent,RECORD_REQUEST);
+
+                Intent stuff;
+                stuff = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(stuff,0);
+
             } catch (ActivityNotFoundException e) {
                 Toast.makeText(this, "No third party available for recording.", Toast.LENGTH_SHORT).show();
                 enableAllButtonsButStop();

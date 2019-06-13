@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".MicrophoneTestActivity">
 
-
     <Button
         android:id="@+id/recordWithMediaRecorderBtn"
         android:layout_width="wrap_content"
@@ -39,7 +38,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/recordWithIntentBtn"
         android:text="@string/play" />
-
-
 
 </RelativeLayout>
