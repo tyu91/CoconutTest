@@ -68,4 +68,12 @@
         android:text="@string/record_video"
         android:layout_below="@id/cameraByIntentBtn"
         android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:id="@+id/sensorsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/initialize_sensors"
+        android:layout_below="@id/recordVideoBtn"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

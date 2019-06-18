@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -366,11 +367,38 @@ public class Camera2APITestActivity extends AppCompatActivity implements View.On
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
 
 
+
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
                     try {
                         session.capture(captureBuilder.build(), captureCallbackListener, mBackgroundHandler);
+
+
+                        //Test code for Coconut. This should stay commented out when running the app
+                        /*
+                        CaptureRequest firstCaptureRequest = captureBuilder.build();
+                        CaptureRequest secondCaptureRequest = captureBuilder.build();
+                        List<CaptureRequest> captureRequests = new ArrayList<CaptureRequest>();
+                        captureRequests.add(firstCaptureRequest);
+                        captureRequests.add(secondCaptureRequest);
+
+                        Executor executor = new Executor() {
+                            @Override
+                            public void execute(Runnable command) {
+                                Log.i("Executor", "Executed");
+                            }
+                        };
+
+                        session.captureBurst(captureRequests, captureCallbackListener, mBackgroundHandler);
+                        session.captureBurstRequests(captureRequests, executor, captureCallbackListener);
+                        session.captureSingleRequest(firstCaptureRequest, executor, captureCallbackListener);
+                        session.setRepeatingBurst(captureRequests, captureCallbackListener, mBackgroundHandler);
+                        session.setRepeatingBurstRequests(captureRequests, executor, captureCallbackListener);
+                        session.setRepeatingRequest(firstCaptureRequest, captureCallbackListener, mBackgroundHandler);
+                        session.setSingleRepeatingRequest(firstCaptureRequest, executor, captureCallbackListener);
+                        */
+
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
                     }

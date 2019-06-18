@@ -29,12 +29,16 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class VideoRecordingTestActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -310,7 +314,36 @@ public class VideoRecordingTestActivity extends AppCompatActivity implements Vie
             if (outputFilePath == null || outputFilePath.isEmpty()) {
                 outputFilePath = createVideoFilePath();
             }
-            mRecorder.setOutputFile(outputFilePath);
+
+            //The below code sets the output file, which is the data tracked by Coconut
+            //We use a random switch case to determine which of the three methods to use
+            //All methods should be annotated
+            File outputFile = new File(outputFilePath);
+            int toUse = ThreadLocalRandom.current().nextInt(0, 3);
+            switch (toUse) {
+                case 0:
+                    mRecorder.setOutputFile(outputFilePath);
+                    break;
+                case 1:
+                    mRecorder.setOutputFile(outputFile);
+                    break;
+                case 2:
+                    FileDescriptor fd;
+                    try {
+                        FileOutputStream fos = new FileOutputStream(outputFile);
+                        fd = fos.getFD();
+                        mRecorder.setOutputFile(fd);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Cannot Set File", Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Cannot Set File", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+
+
             mRecorder.setVideoEncodingBitRate(10000000);
             mRecorder.setVideoFrameRate(30);
             mRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());

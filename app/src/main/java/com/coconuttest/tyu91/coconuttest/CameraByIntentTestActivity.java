@@ -2,6 +2,7 @@ package com.coconuttest.tyu91.coconuttest;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * This activity serves to test Coconut's ability to annotate personal data
@@ -44,9 +46,16 @@ public class CameraByIntentTestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                startActivityForResult(intent,  CAMERA_REQUEST);
-
+                try {
+                    Intent intent;
+                    intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    Intent otherIntent;
+                    otherIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                    intent = otherIntent;
+                    startActivityForResult(intent,CAMERA_REQUEST);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(CameraByIntentTestActivity.this, "No third party available for capturing images.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -60,6 +69,4 @@ public class CameraByIntentTestActivity extends AppCompatActivity {
             imageView.setImageBitmap(photo);
         }
     }
-
-    
 }

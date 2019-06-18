@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BODY_SENSORS" />
 
     <application
         android:allowBackup="true"
@@ -39,6 +40,8 @@
         <activity android:name=".Camera2APITestActivity" />
         <activity android:name=".CameraByIntentTestActivity" />
         <activity android:name=".VideoRecordingTestActivity" />
+        <activity android:name=".VideoRecordingByIntentTestActivity" />
+        <activity android:name=".SensorTestActivity" />
     </application>
 
 </manifest>
