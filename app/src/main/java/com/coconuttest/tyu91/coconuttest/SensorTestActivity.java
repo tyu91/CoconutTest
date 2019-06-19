@@ -15,21 +15,48 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 /**
  * Tests Coconut's ability to annotate APIs related to sensor data
  *
+ * This activity simply activates all possible sensors and registers listeners.
+ * 
+ * It is not intended for actual use.
+ *
  * @author Elijah Neundorfer 6/17/19
- * @version 6/18/19
+ * @version 6/19/19
  */
 public class SensorTestActivity extends AppCompatActivity {
 
     //Manages all sensors
     private SensorManager sensorManager;
 
-    //Will hold a reference to every sensor we need to access
-    private Sensor[] sensors;
+    //Variable for every sensor we need to access
+    private Sensor accelerometerSensor;
+    private Sensor accelerometerUncalibratedSensor;
+    private Sensor ambientTemperatureSensor;
+    private Sensor devicePrivateBaseSensor;
+    private Sensor gameRotationVectorSensor;
+    private Sensor geomagneticRotationVectorSensor;
+    private Sensor gravitySensor;
+    private Sensor gyroscopeSensor;
+    private Sensor gyroscopeUncalibratedSensor;
+    private Sensor heartBeatSensor;
+    private Sensor heartRateSensor;
+    private Sensor lightSensor;
+    private Sensor linearAccelerationSensor;
+    private Sensor lowLatencyOffBodyDetectionSensor;
+    private Sensor magneticFieldSensor;
+    private Sensor magneticFieldUncalibratedSensor;
+    private Sensor motionDetectSensor;
+    private Sensor pose6DOFSensor;
+    private Sensor pressureSensor;
+    private Sensor proximitySensor;
+    private Sensor relativeHumiditySensor;
+    private Sensor rotationVectorSensor;
+    private Sensor significantMotionSensor;
+    private Sensor stationaryDetectSensor;
+    private Sensor stepCounterSensor;
+    private Sensor stepDetectorSensor;
 
     //Handler necessary for some methods annotated by Coconut
     Handler handler = new Handler();
@@ -39,45 +66,46 @@ public class SensorTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sensor_test);
 
-        //Requesting the BODY_SENSOR permission (not necessary for every sensor on this list)
+        //Requesting the BODY_SENSOR permission (needed for heart sensors and other body specific sensors)
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BODY_SENSORS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.BODY_SENSORS},
                     1);
         }
 
+
         //Initializing our SensorManager
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         //Initializing and assigning the sensors we're concerned with
-        sensors = new Sensor[26];
-        sensors[0] = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensors[1] = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER_UNCALIBRATED);
-        sensors[2] = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-        sensors[3] = sensorManager.getDefaultSensor(Sensor.TYPE_DEVICE_PRIVATE_BASE);
-        sensors[4] = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
-        sensors[5] = sensorManager.getDefaultSensor(Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR);
-        sensors[6] = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-        sensors[7] = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        sensors[8] = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE_UNCALIBRATED);
-        sensors[9] = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_BEAT);
-        sensors[10] = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
-        sensors[11] = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        sensors[12] = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        sensors[13] = sensorManager.getDefaultSensor(Sensor.TYPE_LOW_LATENCY_OFFBODY_DETECT);
-        sensors[14] = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensors[15] = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED);
-        sensors[16] = sensorManager.getDefaultSensor(Sensor.TYPE_MOTION_DETECT);
-        sensors[17] = sensorManager.getDefaultSensor(Sensor.TYPE_POSE_6DOF);
-        sensors[18] = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        sensors[19] = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        sensors[20] = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
-        sensors[21] = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        sensors[22] = sensorManager.getDefaultSensor(Sensor.TYPE_STATIONARY_DETECT);
-        sensors[23] = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        sensors[24] = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-        sensors[25] = sensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
+        accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        accelerometerUncalibratedSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER_UNCALIBRATED);
+        ambientTemperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        devicePrivateBaseSensor = sensorManager.getDefaultSensor(Sensor.TYPE_DEVICE_PRIVATE_BASE);
+        gameRotationVectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
+        geomagneticRotationVectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR);
+        gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        gyroscopeUncalibratedSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE_UNCALIBRATED);
+        heartBeatSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_BEAT);
+        heartRateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        linearAccelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        lowLatencyOffBodyDetectionSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LOW_LATENCY_OFFBODY_DETECT);
+        magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        magneticFieldUncalibratedSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED);
+        motionDetectSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MOTION_DETECT);
+        pose6DOFSensor = sensorManager.getDefaultSensor(Sensor.TYPE_POSE_6DOF);
+        pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        relativeHumiditySensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+        rotationVectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        significantMotionSensor = sensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
+        stationaryDetectSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STATIONARY_DETECT);
+        stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
     }
+
 
     //Listens for changes in our triggered sensors and tracks data
     TriggerEventListener triggerEventListener = new TriggerEventListener() {
@@ -105,36 +133,40 @@ public class SensorTestActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //Iterates over our array of sensors and registers a listener for each
-        for (int i = 0; i < sensors.length; i++) {
-            //Ensures our device has the sensor available.
-            if(sensors[i] != null) {
-                Log.d("Sensors", "onResume: Sensor " + i + " is registering");
-                //If the sensor is a trigger type sensor, we register a TriggerEventListener and continue
-                if (sensors[i] == sensors[16] || sensors[i] == sensors[22] || sensors[i] == sensors[25]) {
-                    sensorManager.requestTriggerSensor(triggerEventListener, sensors[i]);
-                    continue;
-                }
-                //Since there are four versions of the registerListener method to annotate with Coconut, we test all four methods here
-                int toUse = ThreadLocalRandom.current().nextInt(0, 4);
-                switch (toUse) {
-                    case 0:
-                        sensorManager.registerListener(sensorEventListener,  sensors[i], sensorManager.SENSOR_DELAY_NORMAL);
-                        break;
-                    case 1:
-                        sensorManager.registerListener(sensorEventListener, sensors[i], SensorManager.SENSOR_DELAY_NORMAL, 5);
-                        break;
-                    case 2:
-                        sensorManager.registerListener(sensorEventListener, sensors[i], SensorManager.SENSOR_DELAY_NORMAL, handler);
-                        break;
-                    case 3:
-                        sensorManager.registerListener(sensorEventListener, sensors[i], SensorManager.SENSOR_DELAY_NORMAL, 5, handler);
-                        break;
-                }
-            } else {
-                Log.d("Sensors", "onResume: Sensor " + i + " is null");
-            }
+
+        if(accelerometerSensor != null) sensorManager.registerListener(sensorEventListener,accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if(accelerometerUncalibratedSensor != null) sensorManager.registerListener(sensorEventListener, accelerometerUncalibratedSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if(ambientTemperatureSensor != null) sensorManager.registerListener(sensorEventListener, ambientTemperatureSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if(devicePrivateBaseSensor != null) sensorManager.registerListener(sensorEventListener, devicePrivateBaseSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if(gameRotationVectorSensor != null) sensorManager.registerListener(sensorEventListener, gameRotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if(geomagneticRotationVectorSensor != null) sensorManager.registerListener(sensorEventListener, geomagneticRotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        if(gravitySensor != null) sensorManager.registerListener(sensorEventListener, gravitySensor, SensorManager.SENSOR_DELAY_NORMAL, 5);
+        if(gyroscopeSensor != null) sensorManager.registerListener(sensorEventListener, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL,5);
+        if(gyroscopeUncalibratedSensor != null) sensorManager.registerListener(sensorEventListener, gyroscopeUncalibratedSensor, SensorManager.SENSOR_DELAY_NORMAL, 5);
+        //Ensuring we have permissions to use the heart rate sensor
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BODY_SENSORS) == PackageManager.PERMISSION_GRANTED) {
+            if(heartBeatSensor != null) sensorManager.registerListener(sensorEventListener, heartBeatSensor, SensorManager.SENSOR_DELAY_NORMAL, 5);
+            if(heartRateSensor != null) sensorManager.registerListener(sensorEventListener, heartRateSensor, SensorManager.SENSOR_DELAY_NORMAL, 5);
         }
+        if(lightSensor != null) sensorManager.registerListener(sensorEventListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL, handler);
+        if(linearAccelerationSensor != null) sensorManager.registerListener(sensorEventListener, linearAccelerationSensor, SensorManager.SENSOR_DELAY_NORMAL, handler);
+        if(lowLatencyOffBodyDetectionSensor != null) sensorManager.registerListener(sensorEventListener, lowLatencyOffBodyDetectionSensor, SensorManager.SENSOR_DELAY_NORMAL, handler);
+        if(magneticFieldSensor != null) sensorManager.registerListener(sensorEventListener, magneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL, handler);
+        if(magneticFieldUncalibratedSensor != null) sensorManager.registerListener(sensorEventListener, magneticFieldUncalibratedSensor, SensorManager.SENSOR_DELAY_NORMAL, handler);
+
+        if(pose6DOFSensor != null) sensorManager.registerListener(sensorEventListener, pose6DOFSensor, SensorManager.SENSOR_DELAY_NORMAL, 5, handler);
+        if(pressureSensor != null) sensorManager.registerListener(sensorEventListener, pressureSensor, SensorManager.SENSOR_DELAY_NORMAL, 5, handler);
+        if(proximitySensor != null) sensorManager.registerListener(sensorEventListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL, 5, handler);
+        if(relativeHumiditySensor != null) sensorManager.registerListener(sensorEventListener, relativeHumiditySensor, SensorManager.SENSOR_DELAY_NORMAL, 5, handler);
+        if(rotationVectorSensor != null) sensorManager.registerListener(sensorEventListener, rotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL, 5, handler);
+        if(stepCounterSensor != null) sensorManager.registerListener(sensorEventListener, stepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL, 5, handler);
+        if(stepDetectorSensor != null) sensorManager.registerListener(sensorEventListener, stepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL, 5, handler);
+
+
+        if(motionDetectSensor != null) sensorManager.requestTriggerSensor(triggerEventListener, motionDetectSensor);
+        if(significantMotionSensor != null) sensorManager.requestTriggerSensor(triggerEventListener, significantMotionSensor);
+        if(stationaryDetectSensor != null) sensorManager.requestTriggerSensor(triggerEventListener, stationaryDetectSensor);
     }
 
     @Override
@@ -142,8 +174,8 @@ public class SensorTestActivity extends AppCompatActivity {
         super.onPause();
         //Clearing out our listeners
         sensorManager.unregisterListener(sensorEventListener);
-        sensorManager.cancelTriggerSensor(triggerEventListener, sensors[16]);
-        sensorManager.cancelTriggerSensor(triggerEventListener, sensors[22]);
-        sensorManager.cancelTriggerSensor(triggerEventListener, sensors[25]);
+        sensorManager.cancelTriggerSensor(triggerEventListener, motionDetectSensor);
+        sensorManager.cancelTriggerSensor(triggerEventListener, significantMotionSensor);
+        sensorManager.cancelTriggerSensor(triggerEventListener, stationaryDetectSensor);
     }
 }
