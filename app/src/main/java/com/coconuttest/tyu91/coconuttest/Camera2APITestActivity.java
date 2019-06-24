@@ -172,6 +172,10 @@ public class Camera2APITestActivity extends AppCompatActivity implements View.On
         }
     };
 
+    @CameraAnnotation(
+            purpose = {CameraPurpose.UNKNOWN},
+            purposeDescription = {""},
+            visibility = {Visibility.UNKNOWN})
     ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
 
         /**
@@ -212,7 +216,11 @@ public class Camera2APITestActivity extends AppCompatActivity implements View.On
          * @param bytes
          * @throws IOException
          */
-        private void save(byte[] bytes) throws IOException {
+        private void save(@StorageAnnotation(
+                purposeDescription = {""},
+                accessControl = {AccessControlOption.UNKNOWN},
+                retentionTime = {""})
+                          byte[] bytes) throws IOException {
             File file = createImageFile();
             OutputStream output = null;
             try {
