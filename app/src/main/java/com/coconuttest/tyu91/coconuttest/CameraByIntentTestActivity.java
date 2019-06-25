@@ -15,6 +15,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+
+import me.tianshili.annotationlib.commons.Visibility;
+
 /**
  * This activity serves to test Coconut's ability to annotate personal data
  * relating to capturing pictures by intent
@@ -47,14 +50,13 @@ public class CameraByIntentTestActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 try {
+
                     Intent intent;
                     intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    Intent otherIntent;
-                    otherIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                    intent = otherIntent;
-                    startActivityForResult(intent,CAMERA_REQUEST);
+                    startActivityForResult(intent, CAMERA_REQUEST);
                 } catch (ActivityNotFoundException e) {
-                    Toast.makeText(CameraByIntentTestActivity.this, "No third party available for capturing images.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CameraByIntentTestActivity.this,
+                            "No third party available for capturing images.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

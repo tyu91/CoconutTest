@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 /**
  * Tests Coconut's ability to annotate APIs related to sensor data
@@ -89,6 +90,43 @@ public class SensorTestActivity extends AppCompatActivity {
         //Initializing our SensorManager
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
+        //Initializing variables for DirectChannels
+        try {
+            memoryFile = new MemoryFile("Sensor Channel",1064960);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            hardwareBuffer = HardwareBuffer.create(
+                    1064960, 1, HardwareBuffer.BLOB, 1,
+                    HardwareBuffer.USAGE_CPU_READ_OFTEN | HardwareBuffer.USAGE_GPU_DATA_BUFFER
+                            | HardwareBuffer.USAGE_SENSOR_DIRECT_DATA);
+
+            /**
+             * Have yet to figure out a way to successfully instantiate both SensorDirectChannels
+             * without significant coding time. Trying to find a good way to do this while being
+             * wary of the cost/benefit balance.
+             *
+             * Currently, the Annotations work fine, but we're just ignoring exceptions and
+             * bypassing these SensorDirectChannels later in the code.
+             *
+             * Here are some links that may be able to help later -
+             * https://android.googlesource.com/platform/cts/+/master/tests/sensor/src/android/hardware/cts/SensorDirectReportTest.java?autodive=0%2F
+             * https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/hardware/SystemSensorManager.java
+             */
+            try {
+                sensorDirectChannelMem = sensorManager.createDirectChannel(memoryFile);
+            } catch (UncheckedIOException e) {
+                Log.e("SensorDirecChannelMem", "Couldn't Create Direct Channel");
+            }
+            try {
+                sensorDirectChannelBuf = sensorManager.createDirectChannel(hardwareBuffer);
+            } catch (UncheckedIOException e) {
+                Log.e("SensorDirecChannelBuf", "Couldn't Create Direct Channel");
+            }
+
+        }
+
         //Initializing and assigning the sensors we're concerned with
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         accelerometerUncalibratedSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER_UNCALIBRATED);
@@ -117,29 +155,7 @@ public class SensorTestActivity extends AppCompatActivity {
         stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
 
-        //Initializing variables for DirectChannels
-        try {
-            memoryFile = new MemoryFile("Test",150);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            /**
-             * Have yet to figure out a way to successfully instantiate a HardwareBuffer and
-             * both SensorDirectChannels without significant coding time. Trying to find a good
-             * way to do this while being wary of the cost/benefit balance.
-             *
-             * Currently, the Annotations work fine, but this and other sections of code must
-             * be commented out for the activity to function.
-             */
-            hardwareBuffer = HardwareBuffer.create(
-                    1064960, 1, HardwareBuffer.BLOB, 1,
-                    HardwareBuffer.USAGE_CPU_READ_OFTEN | HardwareBuffer.USAGE_GPU_DATA_BUFFER
-                            | HardwareBuffer.USAGE_SENSOR_DIRECT_DATA);
-            sensorDirectChannelBuf = sensorManager.createDirectChannel(hardwareBuffer);
 
-            sensorDirectChannelMem = sensorManager.createDirectChannel(memoryFile);
-        }
     }
 
     //Listens for changes in our triggered sensors and tracks data
@@ -213,8 +229,8 @@ public class SensorTestActivity extends AppCompatActivity {
         super.onPause();
         //Clearing out our listeners/DirectChannels
         sensorManager.unregisterListener(sensorEventListener);
-        sensorDirectChannelBuf.close();
-        sensorDirectChannelMem.close();
+        if(sensorDirectChannelBuf != null) sensorDirectChannelBuf.close();
+        if(sensorDirectChannelMem != null) sensorDirectChannelMem.close();
         sensorManager.cancelTriggerSensor(triggerEventListener, motionDetectSensor);
         sensorManager.cancelTriggerSensor(triggerEventListener, significantMotionSensor);
         sensorManager.cancelTriggerSensor(triggerEventListener, stationaryDetectSensor);

@@ -44,9 +44,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadLocalRandom;
 
+
+import me.tianshili.annotationlib.commons.Visibility;
 
 /**
  * This activity serves to test Coconut's ability to annotate personal data
@@ -172,15 +173,10 @@ public class Camera2APITestActivity extends AppCompatActivity implements View.On
         }
     };
 
-    @CameraAnnotation(
-            purpose = {CameraPurpose.UNKNOWN},
-            purposeDescription = {""},
-            visibility = {Visibility.UNKNOWN})
     ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
-
         /**
          * When an image becomes available, we save it to an output file
-         * @param reader
+         * @param reader ImageReader used to acquire images
          */
         @Override
         public void onImageAvailable(ImageReader reader) {
@@ -195,7 +191,10 @@ public class Camera2APITestActivity extends AppCompatActivity implements View.On
                         image = reader.acquireLatestImage();
                         break;
                 }
-                ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+                ByteBuffer buffer = null;
+                if (image != null) {
+                    buffer = image.getPlanes()[0].getBuffer();
+                }
                 byte[] bytes = new byte[buffer.capacity()];
                 buffer.get(bytes);
                 save(bytes);
@@ -216,11 +215,7 @@ public class Camera2APITestActivity extends AppCompatActivity implements View.On
          * @param bytes
          * @throws IOException
          */
-        private void save(@StorageAnnotation(
-                purposeDescription = {""},
-                accessControl = {AccessControlOption.UNKNOWN},
-                retentionTime = {""})
-                          byte[] bytes) throws IOException {
+        private void save(byte[] bytes) throws IOException {
             File file = createImageFile();
             OutputStream output = null;
             try {

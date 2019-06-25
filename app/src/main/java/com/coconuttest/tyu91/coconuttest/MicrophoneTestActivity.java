@@ -28,6 +28,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ThreadLocalRandom;
 
+import me.tianshili.annotationlib.commons.Visibility;
+import me.tianshili.annotationlib.storage.AccessControlOption;
+import me.tianshili.annotationlib.storage.StorageAnnotation;
+
 import static android.Manifest.permission;
 
 /**
@@ -297,9 +301,6 @@ public class MicrophoneTestActivity extends AppCompatActivity implements MediaPl
                 //Start the recording
                 mAudioRecord.startRecording();
 
-                //Creating the buffer we will read to
-                byte[] buffer = new byte[bufferSize];
-
                 //Creating the FileOutputStream we will write to
                 FileOutputStream os = null;
                 try {
@@ -308,8 +309,26 @@ public class MicrophoneTestActivity extends AppCompatActivity implements MediaPl
                     e.printStackTrace();
                 }
 
+                //Creating the buffer we will read to
+                @StorageAnnotation(
+                        purposeDescription = {"Storing recorded audio notes"},
+                        accessControl = {AccessControlOption.PRIVATE_ACCESS},
+                        retentionTime = {"Indefinitely"})
+                byte[] buffer = new byte[bufferSize];
+
                 //This code loops until the recording is stopped by the user
                 while(threadActive) {
+
+                    //Reading from the AudioRecord object. Data goes to the buffer parameter.
+                    mAudioRecord.read(buffer, 0, buffer.length);
+
+                    try {
+                        //Writing data from our buffer to the FileOutputStream
+                        assert os != null;
+                        os.write(buffer, 0, buffer.length);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                     //In order to test Coconut on all versions of AudioRecord.read, we initialize all the necessary variables and then call the method with every possible parameter combination.
                     //If this is not commented out, however, the recording feature will not work.
@@ -327,17 +346,6 @@ public class MicrophoneTestActivity extends AppCompatActivity implements MediaPl
                     mAudioRecord.read(byteBuffer, bufferElements2Rec * bytesPerElement);
                     mAudioRecord.read(bufferInBytes, 0, bufferElements2Rec * bytesPerElement);
                     */
-
-
-                    //Reading from the AudioRecord object. Data goes to the buffer parameter.
-                    mAudioRecord.read(buffer, 0, buffer.length);
-
-                    try {
-                        //Writing data from our buffer to the FileOutputStream
-                        os.write(buffer, 0, buffer.length);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
 
                 //Clean up
