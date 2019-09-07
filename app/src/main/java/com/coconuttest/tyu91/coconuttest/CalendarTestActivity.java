@@ -11,7 +11,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.MyApplication;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessHistory;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.NotificationUtils;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PermissionNotice;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PersonalDataGroup;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.SharedDataLoggingUtils;
+
+
 import java.util.ArrayList;
+
+import me.tianshili.annotationlib.calendar.CalendarSource;
 
 public class CalendarTestActivity extends AppCompatActivity {
     private int MY_PERMISSIONS_REQUEST_READ_CALENDAR = 1;
@@ -69,6 +79,9 @@ public class CalendarTestActivity extends AppCompatActivity {
                 + CalendarContract.Attendees.ATTENDEE_EMAIL + " = ?) AND ("
                 + CalendarContract.Calendars.OWNER_ACCOUNT + " = ?))";
 
+        @CalendarSource(
+                ID = "CalendarSource-0",
+                purposes = {"Not specified by developer"})
         Cursor c;
 
         //query for calendar results

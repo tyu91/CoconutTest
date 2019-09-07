@@ -1,17 +1,44 @@
 package com.coconuttest.tyu91.coconuttest;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.Telephony;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.android.volley.Cache;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.MyApplication;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessHistory;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.NotificationUtils;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PermissionNotice;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PersonalDataGroup;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.SharedDataLoggingUtils;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+
+import me.tianshili.annotationlib.LocalOnly;
+import me.tianshili.annotationlib.network.Network;
+import me.tianshili.annotationlib.sms.SMSSource;
+import me.tianshili.annotationlib.sms.SMSSink;
 
 public class SmsTestActivity extends AppCompatActivity {
 
@@ -20,6 +47,10 @@ public class SmsTestActivity extends AppCompatActivity {
     private SmsTestAdapter smsTestAdapter;
     private ArrayList<String> smsResults;
 
+    private RequestQueue mRequestQueue;
+    private String currentWeatherURL = "";
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,12 +63,35 @@ public class SmsTestActivity extends AppCompatActivity {
         rvSms.setAdapter(smsTestAdapter);
         rvSms.setLayoutManager(new LinearLayoutManager(this));
 
+
         //set up SMS permission request
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
 
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_SMS},
-                    MY_PERMISSIONS_REQUEST_READ_SMS);
+            /*
+             * HS commented code
+             * ActivityCompat.requestPermissions(this,
+             *       new String[]{Manifest.permission.READ_SMS},
+             *       MY_PERMISSIONS_REQUEST_READ_SMS);
+             */
+
+
+            /*
+             * HS generated code begins
+             */
+            final Activity currentActivity = this;
+            PermissionNotice.showDialog(MyApplication.getContext(), PersonalDataGroup.SMS,
+                    new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    ActivityCompat.requestPermissions(currentActivity,
+                            new String[]{Manifest.permission.READ_SMS},
+                            MY_PERMISSIONS_REQUEST_READ_SMS);
+                }
+            });
+            /*
+             * HS generated code ends
+             */
+            return;
         }
 
         //define projection query field
@@ -109,15 +163,17 @@ public class SmsTestActivity extends AppCompatActivity {
 
         };
 
+        @SMSSource(
+                ID = "SMSSource-1",
+                purposes = {"Not specified by developer"})
         Cursor cursor;
 
         //query for SMS results
-        cursor = this.getBaseContext().getContentResolver().query(
-                Telephony.Sms.CONTENT_URI,
-                projectionSms,
-                null,
-                null,
-                null);
+        cursor = this.getBaseContext()
+                .getContentResolver()
+                .query(
+                        Telephony.Sms.CONTENT_URI, projectionSms, null, null, null
+                );
 
         //populate SMS recycler view with query results
         while (cursor.moveToNext()) {
@@ -125,10 +181,46 @@ public class SmsTestActivity extends AppCompatActivity {
         }
         cursor.close();
 
+        StringBuilder smsResultsString = new StringBuilder();
+        for (String smsResult: smsResults) {
+            smsResultsString.append(smsResult);
+        }
+
+        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+
+        BasicNetwork network = new BasicNetwork(new HurlStack());
+
+        mRequestQueue = new RequestQueue(cache, network);
+        mRequestQueue.start();
+
+        @SMSSink(
+                IDs = {"SMSSource-1"},
+                purposes = {"SMS data will be sent to the network because TODO"},
+                dataTypes = {"Not specified by developer"})
+        @LocalOnly(
+                IDs = {})
+        @Network(
+                destinations = {"Not specified by developer"})
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                currentWeatherURL + smsResultsString + "test",
+                null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+
+        mRequestQueue.add(request);
+
         //TODO: figure out a way to parse Uri.parse instead of CONTENT_URI
+        @SMSSource(
+                ID = "SMSSource-0",
+                purposes = {"Not specified by developer"})
         Cursor uriCursor;
         uriCursor = this.getBaseContext().getContentResolver().query(Uri.parse("content://sms/inbox"), projectionSms, null, null, null);
-
     }
 
 

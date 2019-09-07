@@ -9,6 +9,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.MyApplication;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessHistory;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.NotificationUtils;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PermissionNotice;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PersonalDataGroup;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.SharedDataLoggingUtils;
 
 public class ContactsTestAdapter extends RecyclerView.Adapter<ContactsTestAdapter.ViewHolder>{
 

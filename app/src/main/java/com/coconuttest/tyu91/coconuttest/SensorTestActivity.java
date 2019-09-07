@@ -21,6 +21,12 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.MyApplication;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessHistory;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.NotificationUtils;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PermissionNotice;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PersonalDataGroup;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.SharedDataLoggingUtils;
 
 /**
  * Tests Coconut's ability to annotate APIs related to sensor data

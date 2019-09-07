@@ -18,6 +18,13 @@ import android.widget.Toast;
 
 import me.tianshili.annotationlib.commons.Visibility;
 
+import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.MyApplication;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessHistory;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.NotificationUtils;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PermissionNotice;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PersonalDataGroup;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.SharedDataLoggingUtils;
+
 /**
  * This activity serves to test Coconut's ability to annotate personal data
  * relating to capturing pictures by intent
