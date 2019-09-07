@@ -16,6 +16,135 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+//    sourceSets {
+//        main {
+//            java.srcDirs = ["$buildDir/generated-src"]
+//        }
+//    }
+}
+
+
+class CoconutEntry {
+    public Integer lineNumber;
+    public String fileName;
+    public String dataGroup
+    public String insertValue;
+
+    public CoconutEntry() {
+    }
+
+    public CoconutEntry(Integer lineNumber, String fileName, String dataGroup, String insertValue) {
+        this.lineNumber = lineNumber;
+        this.fileName = fileName;
+        this.dataGroup = dataGroup;
+        this.insertValue = insertValue;
+    }
+
+    public String toString() {
+        String toReturn = String.valueOf(lineNumber) + ", " + fileName + ", " + dataGroup + ", " + insertValue;
+        return toReturn;
+    }
+}
+
+task backupSources (type: Copy) {
+    from "src/main/java"
+    into("$buildDir/backup-src")
+    project.logger.lifecycle("backupSources")
+}
+task generateSources() {
+    List<CoconutEntry> entries = new ArrayList<>()
+    CoconutEntry tempEntry
+
+    try
+    {
+        File myFile = new File("$buildDir/CoconutText.txt")
+        Scanner fileScnr = new Scanner(myFile)
+        while(fileScnr.hasNext())
+        {
+            String commandLine = fileScnr.nextLine()
+            String[] commandLineArray = commandLine.split("#") //Seperates the ":" tags from the contents
+            if(commandLineArray[0].contains('LineNumber')) {
+                tempEntry.lineNumber = Integer.valueOf(commandLineArray[1])
+            } else if(commandLineArray[0].contains('FileName')) {
+                tempEntry.fileName = commandLineArray[1]
+            } else if (commandLineArray[0].contains('DataGroup')) {
+                tempEntry.dataGroup = commandLineArray[1]
+            } else if(commandLineArray[0].contains('InsertValue')) {
+                try {
+                    tempEntry.insertValue = commandLineArray[1]
+                } catch(IndexOutOfBoundsException e) {
+                }
+                if(commandLineArray.length < 3)
+                {
+                    while(fileScnr.hasNext()) {
+                        String line = fileScnr.nextLine()
+                        String[] lineArray = line.split("#")
+                        tempEntry.insertValue = tempEntry.insertValue + "\n" + lineArray[0]
+                        if(lineArray.length > 1) break
+                    }
+                }
+            } else if(commandLineArray[0].equals('ENTRY')) {
+                tempEntry = new CoconutEntry()
+            } else if(commandLineArray[0].equals('ENDENTRY')) {
+                entries.add(tempEntry)
+            } else continue
+        }
+        fileScnr.close()
+        project.logger.lifecycle("$entries")
+    }catch(IOException e) {
+    }
+
+    copy {
+        from "src/main/java"
+        into "$buildDir/generated-src"
+
+        def fileLineNumber = 1
+        def currentFile = ""
+
+        eachFile { fileCopyDetails ->
+            currentFile = fileCopyDetails.getSourceName()
+            project.logger.lifecycle("$currentFile")
+            fileLineNumber = 1
+        }
+        filter { String line ->
+            for(Integer i = 0; i < entries.size(); i++)
+            {
+                if(fileLineNumber == entries.get(i).lineNumber && currentFile == entries.get(i).fileName) {
+                    line = line.replace(";", ";\n${entries.get(i).insertValue}")
+                }
+            }
+            fileLineNumber++
+            return line;
+        }
+        project.logger.lifecycle("copy over files")
+    }
+
+    project.logger.lifecycle("finish generating sources")
+}
+
+task overwriteWithGeneratedSource(type: Copy) {
+    from "$buildDir/generated-src"
+    into "src/main/java"
+    project.logger.lifecycle("overwriteWithGeneratedSource")
+}
+
+task moveSourceBack (type: Copy) {
+    project.logger.lifecycle("moveSourceBack")
+    from "$buildDir/backup-src"
+    into "src/main/java"
+    project.logger.lifecycle("moveSourceBack")
+}
+
+generateSources.dependsOn backupSources
+
+overwriteWithGeneratedSource.dependsOn generateSources
+
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn overwriteWithGeneratedSource
+}
+
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.finalizedBy moveSourceBack
 }
 
 dependencies {
