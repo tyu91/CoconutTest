@@ -4,19 +4,18 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.text.Html;
 import android.text.Spanned;
 
+import androidx.annotation.RequiresApi;
+
 import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.AnnotationInfoMap;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.MyApplication;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AnnotationInfo;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.HSUtils;
 import com.coconuttest.tyu91.coconuttest.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static android.text.Html.FROM_HTML_MODE_LEGACY;
 import static com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessType.ONE_TIME;
+import static com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessType.RECURRING;
 
 public class NotificationUtils {
 
@@ -26,10 +25,10 @@ public class NotificationUtils {
             return;
         }
 
-        AnnotationInfo aggregatedAnnotationInfo = AnnotationInfoMap.annotationInfoHashMap.get(ID);
+        AnnotationInfo aggregatedAnnotationInfo = AnnotationInfoMap.getAnnotationInfoByID(ID);
 
         String dataGroup = aggregatedAnnotationInfo.dataGroup.toString().replace("_", " ");
-        String purposesString = HSUtils.generatePurposesString(aggregatedAnnotationInfo.purposes);
+        String purposesString = HSUtils.generatePurposesString(aggregatedAnnotationInfo.purposes, "<br>");
         String destinationsString = HSUtils.generateEgressInfoString(aggregatedAnnotationInfo.destinations);
         String dataTypesString = HSUtils.generateEgressInfoString(aggregatedAnnotationInfo.leakedDataTypes);
         AccessType accessType = aggregatedAnnotationInfo.accessType;
@@ -51,13 +50,13 @@ public class NotificationUtils {
         }
 
         String title;
-        if (accessType == ONE_TIME) {
-            String currentTime = new java.text.SimpleDateFormat("MM/dd HH:mm",
-                    context.getResources().getConfiguration().locale)
-                    .format(new java.util.Date (System.currentTimeMillis()));
-            title = String.format("Accessed %s data at %s", dataGroup, currentTime);
+        String currentTime = new java.text.SimpleDateFormat("MM/dd HH:mm",
+                context.getResources().getConfiguration().locale)
+                .format(new java.util.Date (System.currentTimeMillis()));
+        if (accessType == ONE_TIME || accessType == RECURRING) {
+            title = String.format("Accessed %s data (%d times in the last hour)", dataGroup, AccessHistory.getInstance().getAccessTimesInLastHour(ID));
         } else {
-            title = String.format("Accessing %s data", dataGroup);
+            title = String.format("Accessing %s data since %s", dataGroup, currentTime);
         }
         Notification notification = new Notification.Builder(context)
                 .setContentTitle(title)

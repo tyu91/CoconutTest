@@ -36,4 +36,22 @@ public class AnnotationInfoMap {
             }}
     );
 
+    public static AnnotationInfo getAnnotationInfoByID (String ID) {
+        return annotationInfoHashMap.get(ID);
+    }
+
+    public static AnnotationInfo [] getAnnotationInfoListByDataGroup(PersonalDataGroup dataGroup) {
+        ArrayList<AnnotationInfo> annotationInfoArrayList = new ArrayList<>();
+        for (Map.Entry<String, AnnotationInfo> item : annotationInfoHashMap.entrySet()) {
+            if (item.getValue().dataGroup == dataGroup) {
+                annotationInfoArrayList.add(item.getValue());
+            }
+        }
+        return annotationInfoArrayList.toArray(new AnnotationInfo[0]);
+    }
+
+    public static int getNotificationIDByID (String ID) {
+        return IDToNotificationIDMap.get(ID);
+    }
+
 }
