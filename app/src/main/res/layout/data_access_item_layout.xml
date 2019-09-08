@@ -10,21 +10,105 @@
         android:orientation="horizontal"
         android:clickable="true">
 
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10pt"
             android:layout_marginTop="10pt"
-            android:layout_marginRight="10pt"
-            android:minHeight="300dp">
-            <TextView
-                android:layout_width="wrap_content"
+            android:layout_marginRight="10pt">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_marginLeft="10pt"
                 android:layout_marginTop="10pt"
                 android:layout_marginRight="10pt"
-                android:text="Material card"/>
-        </com.google.android.material.card.MaterialCardView>
+                android:layout_marginBottom="10pt">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FOR WHAT PURPOSE? (FROM THE DEVELOPER)"/>
+                <TextView
+                    android:id="@+id/data_access_purposes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5pt"
+                    android:textColor="#000000"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10pt"
+                    android:text="SHARED?"/>
+                <TextView
+                    android:id="@+id/data_egress_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5pt"
+                    android:textColor="#000000"/>
+                <TextView
+                    android:id="@+id/view_shared_data"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5pt"
+                    android:textColor="#1A73E8"
+                    android:text="View shared data..."/>
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/chart1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@+id/seekBar1"
+                    android:minHeight="200dp"/>
+
+                <!--<SeekBar-->
+                    <!--android:id="@+id/seekBar2"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:layout_alignParentLeft="true"-->
+                    <!--android:layout_margin="8dp"-->
+                    <!--android:layout_toLeftOf="@+id/tvYMax"-->
+                    <!--android:layout_marginRight="5dp"-->
+                    <!--android:max="200"-->
+                    <!--android:paddingBottom="12dp" />-->
+
+                <!--<SeekBar-->
+                    <!--android:id="@+id/seekBar1"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_above="@+id/seekBar2"-->
+                    <!--android:layout_margin="8dp"-->
+                    <!--android:layout_marginBottom="35dp"-->
+                    <!--android:layout_toLeftOf="@+id/tvXMax"-->
+                    <!--android:layout_marginRight="5dp"-->
+                    <!--android:max="1500"-->
+                    <!--android:paddingBottom="12dp" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/tvXMax"-->
+                    <!--android:layout_width="60dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignBottom="@+id/seekBar1"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:text="dash"-->
+                    <!--android:layout_marginBottom="15dp"-->
+                    <!--android:layout_marginRight="10dp"-->
+                    <!--android:gravity="right"-->
+                    <!--android:textAppearance="?android:attr/textAppearanceSmall" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/tvYMax"-->
+                    <!--android:layout_width="60dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignBottom="@+id/seekBar2"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:text="dash"-->
+                    <!--android:layout_marginBottom="15dp"-->
+                    <!--android:layout_marginRight="10dp"-->
+                    <!--android:gravity="right"-->
+                    <!--android:textAppearance="?android:attr/textAppearanceSmall" />-->
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
 
 </ScrollView>
