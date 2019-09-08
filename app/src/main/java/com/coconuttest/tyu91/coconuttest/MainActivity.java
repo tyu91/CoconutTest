@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
     //TODO: add back buttons for each test activity back to this main activity
     //TODO: app crashes initially if permissions not enabled. This behavior is expected; for now let the app crash, give permission, and reopen app.
 
-    Button calendarBtn, contactsBtn, smsBtn, callLogsBtn, microphoneBtn, camera2Btn, cameraByIntentBtn, recordVideoBtn, sensorsBtn;
+    Button calendarBtn, contactsBtn, smsBtn, callLogsBtn, microphoneBtn, camera2Btn, cameraByIntentBtn, recordVideoBtn, sensorsBtn, PNCBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +115,16 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, SensorTestActivity.class);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        PNCBtn = findViewById(R.id.PNCBtn);
+        PNCBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MyPNCActivity.class);
+                startActivity(intent);
+//                finish();
             }
         });
     }
