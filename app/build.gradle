@@ -90,7 +90,7 @@ task generateSources() {
                     while(fileScnr.hasNext()) {
                         String line = fileScnr.nextLine()
                         String[] lineArray = line.split("#")
-                        tempEntry.insertValue = tempEntry.insertValue + "\n" + lineArray[0]
+                        tempEntry.insertValue = tempEntry.insertValue + lineArray[0]
                         if(lineArray.length > 1) break
                     }
                 }
@@ -121,7 +121,7 @@ task generateSources() {
             for(Integer i = 0; i < entries.size(); i++)
             {
                 if(fileLineNumber == entries.get(i).lineNumber && currentFile == entries.get(i).fileName) {
-                    line = line.replace(";", ";\n${entries.get(i).insertValue}")
+                    line = line.replace(";", "; ${entries.get(i).insertValue}")
                 }
             }
             fileLineNumber++
