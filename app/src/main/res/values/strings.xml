@@ -14,6 +14,7 @@
     <string name="stop_recording">Stop Recording</string>
     <string name="play">Play</string>
     <string name="initialize_sensors">Initalize Sensors</string>
+    <string name="PNC">Privacy Notice Center</string>
     <string name="stop_playing">Stop Playing</string>
     <string name="take_picture">Take picture</string>
 </resources>

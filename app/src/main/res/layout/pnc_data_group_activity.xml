@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:background="#2d89ff">
+        <ImageButton
+            android:id="@+id/allysiqi_global_exit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_close_white_24dp"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/allysiqi_global_exit_button"
+            android:layout_centerInParent="true">
+            <TextView
+                android:id="@+id/allysiqi_configure_permission_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:textSize="24sp"
+                android:textColor="#FFFFFF"
+                tools:text="Microphone Access History"/>
+            <TextView
+                android:id="@+id/allysiqi_configure_permission_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/allysiqi_configure_permission_title"
+                android:layout_alignStart="@id/allysiqi_configure_permission_title"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="10dp"
+                android:textColor="#FFFFFF"
+                tools:text="This privacy notice center contains all Microphone data access records from the past week"/>
+        </RelativeLayout>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#fafafa"
+        android:orientation="vertical">
+        <ListView
+            android:id="@+id/data_access_record_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:dividerHeight="10dip"
+            android:divider="@android:color/transparent">
+        </ListView>
+    </LinearLayout>
+</LinearLayout>
