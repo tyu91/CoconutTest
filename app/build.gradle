@@ -46,6 +46,17 @@ class CoconutEntry {
     }
 }
 
+task syncWithIDE() {
+    String IDEServerResult;
+    Socket clientSocket = new Socket("localhost", 6789);
+    DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+    BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+    outToServer.writeBytes('start insert file generation\n');
+    IDEServerResult = inFromServer.readLine();
+    System.out.println("FROM SERVER: " + IDEServerResult);
+    clientSocket.close();
+}
+
 task backupSources (type: Copy) {
     from "src/main/java"
     into("$buildDir/backup-src")
@@ -134,6 +145,8 @@ task moveSourceBack (type: Copy) {
     into "src/main/java"
     project.logger.lifecycle("moveSourceBack")
 }
+
+backupSources.dependsOn syncWithIDE
 
 generateSources.dependsOn backupSources
 
