@@ -21,9 +21,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -32,6 +29,10 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -192,10 +193,10 @@ public class Camera2APITestActivity extends AppCompatActivity implements View.On
                 int toUse = ThreadLocalRandom.current().nextInt(0, 2);
                 switch (toUse) {
                     case(0):
-                        image = reader.acquireNextImage();
+                        image = reader.acquireNextImage(); /* HS generated code begins */ AccessHistory.getInstance().beginAccessRecord(MyApplication.getContext(), "Placeholder");NotificationUtils.pushPrivacyNotification(MyApplication.getContext(), "Placeholder");/* HS generated code ends */ /* HS generated code begins */ AccessHistory.getInstance().beginAccessRecord(MyApplication.getContext(), "Placeholder"); /* HS generated code begins */ AccessHistory.getInstance().beginAccessRecord(MyApplication.getContext(), "Placeholder");NotificationUtils.pushPrivacyNotification(MyApplication.getContext(), "Placeholder");/* HS generated code ends */NotificationUtils.pushPrivacyNotification(MyApplication.getContext(), "Placeholder"); /* HS generated code begins */ AccessHistory.getInstance().beginAccessRecord(MyApplication.getContext(), "Placeholder");NotificationUtils.pushPrivacyNotification(MyApplication.getContext(), "Placeholder");/* HS generated code ends *//* HS generated code ends */
                         break;
                     case(1):
-                        image = reader.acquireLatestImage();
+                        image = reader.acquireLatestImage(); /* HS generated code begins */ AccessHistory.getInstance().beginAccessRecord(MyApplication.getContext(), "Placeholder");NotificationUtils.pushPrivacyNotification(MyApplication.getContext(), "Placeholder");/* HS generated code ends */
                         break;
                 }
                 ByteBuffer buffer = null;
@@ -382,7 +383,7 @@ public class Camera2APITestActivity extends AppCompatActivity implements View.On
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
                     try {
-                        session.capture(captureBuilder.build(), captureCallbackListener, mBackgroundHandler);
+                        session.capture(captureBuilder.build(), captureCallbackListener, mBackgroundHandler); /* HS generated code begins */ AccessHistory.getInstance().beginAccessRecord(MyApplication.getContext(), "Placeholder");NotificationUtils.pushPrivacyNotification(MyApplication.getContext(), "Placeholder");/* HS generated code ends */
 
 
                         //Test code for Coconut. This should stay commented out when running the app

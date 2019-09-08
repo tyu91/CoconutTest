@@ -8,12 +8,14 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import android.widget.VideoView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.MyApplication;
 import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessHistory;
 import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.NotificationUtils;
