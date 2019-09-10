@@ -28,10 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ThreadLocalRandom;
 
-import me.tianshili.annotationlib.commons.Visibility;
-import me.tianshili.annotationlib.storage.AccessControlOption;
-import me.tianshili.annotationlib.storage.StorageAnnotation;
-
 import static android.Manifest.permission;
 
 /**
@@ -310,10 +306,6 @@ public class MicrophoneTestActivity extends AppCompatActivity implements MediaPl
                 }
 
                 //Creating the buffer we will read to
-                @StorageAnnotation(
-                        purposeDescription = {"Storing recorded audio notes"},
-                        accessControl = {AccessControlOption.PRIVATE_ACCESS},
-                        retentionTime = {"Indefinitely"})
                 byte[] buffer = new byte[bufferSize];
 
                 //This code loops until the recording is stopped by the user
