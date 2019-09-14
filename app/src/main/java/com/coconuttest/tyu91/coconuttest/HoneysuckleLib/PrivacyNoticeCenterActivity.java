@@ -24,7 +24,8 @@ public class PrivacyNoticeCenterActivity extends Activity {
                 "This privacy notice center contains all sensitive data access records from the past week");
 
         ListView dataGroupListView = findViewById(R.id.data_group_notice_list);
-        PrivacyNoticeCenterListAdapter dataGroupListAdapter = new PrivacyNoticeCenterListAdapter(this, Arrays.asList(PersonalDataGroup.values()));
+        PrivacyNoticeCenterListAdapter dataGroupListAdapter = new PrivacyNoticeCenterListAdapter(
+                this, Arrays.asList(HSStatus.getMyAnnotationInfoMap().getAccessedDataGroups()));
         dataGroupListView.setAdapter(dataGroupListAdapter);
         dataGroupListAdapter.notifyDataSetChanged();
     }

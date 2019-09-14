@@ -26,4 +26,14 @@ public class AnnotationInfoMap {
         return this.IDToNotificationIDMap.get(ID);
     }
 
+    public PersonalDataGroup [] getAccessedDataGroups() {
+        ArrayList<PersonalDataGroup> accessedDataGroupArrayList = new ArrayList<>();
+        for (AnnotationInfo annotationInfo : annotationInfoHashMap.values()) {
+            if (!accessedDataGroupArrayList.contains(annotationInfo.dataGroup)) {
+                accessedDataGroupArrayList.add(annotationInfo.dataGroup);
+            }
+        }
+        return accessedDataGroupArrayList.toArray(new PersonalDataGroup[0]);
+    }
+
 }
