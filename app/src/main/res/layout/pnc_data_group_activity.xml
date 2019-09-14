@@ -10,17 +10,10 @@
         android:layout_height="match_parent"
         android:layout_weight="3"
         android:background="#2d89ff">
-        <ImageButton
-            android:id="@+id/allysiqi_global_exit_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_close_white_24dp"/>
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/allysiqi_global_exit_button"
+            android:layout_marginStart="80dp"
             android:layout_centerInParent="true">
             <TextView
                 android:id="@+id/allysiqi_configure_permission_title"
