@@ -25,18 +25,12 @@ import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.MyApplication;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessHistory;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.NotificationUtils;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PermissionNotice;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PersonalDataGroup;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.SharedDataLoggingUtils;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.*;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import me.tianshili.annotationlib.LocalOnly;
 import me.tianshili.annotationlib.network.Network;
 import me.tianshili.annotationlib.sms.SMSSource;
 import me.tianshili.annotationlib.sms.SMSSink;
@@ -80,7 +74,7 @@ public class SmsTestActivity extends AppCompatActivity {
              * HS generated code begins
              */
             final Activity currentActivity = this;
-            PermissionNotice.showDialog(MyApplication.getContext(), PersonalDataGroup.SMS,
+            PermissionNotice.showDialog(HSStatus.getApplicationContext(), PersonalDataGroup.SMS,
                     new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {

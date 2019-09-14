@@ -142,6 +142,12 @@ task overwriteWithGeneratedSource(type: Copy) {
     project.logger.lifecycle("overwriteWithGeneratedSource")
 }
 
+
+task copyAnnotationMap(type: Copy) {
+    from "$buildDir/MyAnnotationInfoMap.java"
+    into "src/main/java/com/coconuttest/tyu91/coconuttest/HoneysuckleGenerated"
+}
+
 task moveSourceBack (type: Copy) {
     project.logger.lifecycle("moveSourceBack")
     from "$buildDir/backup-src"
@@ -155,8 +161,10 @@ generateSources.dependsOn backupSources
 
 overwriteWithGeneratedSource.dependsOn generateSources
 
+copyAnnotationMap.dependsOn overwriteWithGeneratedSource
+
 tasks.withType(JavaCompile) {
-    compileTask -> compileTask.dependsOn overwriteWithGeneratedSource
+    compileTask -> compileTask.dependsOn copyAnnotationMap
 }
 
 tasks.withType(JavaCompile) {

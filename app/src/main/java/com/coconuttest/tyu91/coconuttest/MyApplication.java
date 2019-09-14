@@ -1,4 +1,4 @@
-package com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated;
+package com.coconuttest.tyu91.coconuttest;
 
 import android.app.Application;
 import android.content.Context;

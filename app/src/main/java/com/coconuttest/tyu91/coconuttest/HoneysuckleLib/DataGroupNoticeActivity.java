@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.AnnotationInfoMap;
 import com.coconuttest.tyu91.coconuttest.R;
 
 import java.util.Arrays;
@@ -37,7 +36,7 @@ public class DataGroupNoticeActivity extends Activity {
         ListView dataAccessRecordListView = findViewById(R.id.data_access_record_list);
         DataAccessRecordListAdapter dataAccessRecordListAdapter =
                 new DataAccessRecordListAdapter(this,
-                        Arrays.asList(AnnotationInfoMap.getAnnotationInfoListByDataGroup(mDataGroup)));
+                        Arrays.asList(HSStatus.getMyAnnotationInfoMap().getAnnotationInfoListByDataGroup(mDataGroup)));
         dataAccessRecordListView.setAdapter(dataAccessRecordListAdapter);
         dataAccessRecordListAdapter.notifyDataSetChanged();
 

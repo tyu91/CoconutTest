@@ -9,7 +9,6 @@ import android.text.Spanned;
 
 import androidx.annotation.RequiresApi;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.AnnotationInfoMap;
 import com.coconuttest.tyu91.coconuttest.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -25,7 +24,7 @@ public class NotificationUtils {
             return;
         }
 
-        AnnotationInfo aggregatedAnnotationInfo = AnnotationInfoMap.getAnnotationInfoByID(ID);
+        AnnotationInfo aggregatedAnnotationInfo = HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(ID);
 
         String dataGroup = aggregatedAnnotationInfo.dataGroup.toString().replace("_", " ");
         String purposesString = HSUtils.generatePurposesString(aggregatedAnnotationInfo.purposes, "<br>");
@@ -68,7 +67,7 @@ public class NotificationUtils {
 
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(AnnotationInfoMap.IDToNotificationIDMap.get(ID), notification);
+        notificationManager.notify(HSStatus.getMyAnnotationInfoMap().getNotificationIDByID(ID), notification);
 
     }
 }

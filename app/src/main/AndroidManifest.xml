@@ -21,7 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name=".HoneysuckleGenerated.MyApplication">
+        android:name=".MyApplication">
         <activity android:name=".CallLogsTestActivity"></activity>
         <activity android:name=".SmsTestActivity" />
         <activity android:name=".ContactsTestActivity" />

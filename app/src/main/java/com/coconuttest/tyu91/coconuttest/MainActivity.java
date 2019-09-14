@@ -7,6 +7,9 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.HSStatus;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.*;
+
 public class MainActivity extends AppCompatActivity {
 
     //TODO: add back buttons for each test activity back to this main activity
@@ -18,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        HSStatus.setApplicationContext(MyApplication.getContext());
+        HSStatus.setAnnotationInfoMap(new MyAnnotationInfoMap());
 
         //go to calendar test activity
         calendarBtn = findViewById(R.id.calendarBtn);

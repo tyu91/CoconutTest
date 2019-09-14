@@ -11,13 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.MyApplication;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessHistory;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.NotificationUtils;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PermissionNotice;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PersonalDataGroup;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.SharedDataLoggingUtils;
-
 
 public class CallLogsTestAdapter extends RecyclerView.Adapter<CallLogsTestAdapter.ViewHolder>{
     // Store a member variable for the contacts

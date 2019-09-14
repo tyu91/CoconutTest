@@ -41,12 +41,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.MyApplication;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessHistory;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.NotificationUtils;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PermissionNotice;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PersonalDataGroup;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.SharedDataLoggingUtils;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.*;
+
 
 public class VideoRecordingTestActivity extends AppCompatActivity implements View.OnClickListener {
 

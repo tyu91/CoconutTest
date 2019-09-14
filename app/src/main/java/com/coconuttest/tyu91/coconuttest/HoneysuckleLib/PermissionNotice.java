@@ -12,8 +12,6 @@ import android.view.WindowManager;
 
 import androidx.annotation.RequiresApi;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.AnnotationInfoMap;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -27,7 +25,7 @@ public class PermissionNotice {
             return;
         }
         AnnotationInfo [] annotationInfoList =
-                AnnotationInfoMap.getAnnotationInfoListByDataGroup(personalDataGroup);
+                HSStatus.getMyAnnotationInfoMap().getAnnotationInfoListByDataGroup(personalDataGroup);
         ArrayList<String> purposeList = new ArrayList<>();
         ArrayList<String> destinationList = new ArrayList<>();
         ArrayList<String> dataTypeList = new ArrayList<>();

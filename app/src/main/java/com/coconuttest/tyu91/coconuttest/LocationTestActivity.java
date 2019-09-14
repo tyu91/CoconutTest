@@ -12,12 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import me.tianshili.annotationlib.location.LocationSource;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.MyApplication;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessHistory;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.NotificationUtils;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PermissionNotice;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PersonalDataGroup;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.SharedDataLoggingUtils;
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.*;
+
 
 public class LocationTestActivity extends AppCompatActivity {
     @Override

@@ -15,15 +15,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.MyApplication;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessHistory;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.NotificationUtils;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PermissionNotice;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PersonalDataGroup;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.SharedDataLoggingUtils;
-
-
 import java.util.ArrayList;
+
+import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.*;
 
 public class ContactsTestActivity extends AppCompatActivity {
     private final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;

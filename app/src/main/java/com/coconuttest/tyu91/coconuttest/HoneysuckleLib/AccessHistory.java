@@ -5,8 +5,6 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.AnnotationInfoMap;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

@@ -2,7 +2,6 @@ package com.coconuttest.tyu91.coconuttest.HoneysuckleLib;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 

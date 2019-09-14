@@ -12,12 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.coconuttest.tyu91.coconuttest.MainActivity;
-import com.coconuttest.tyu91.coconuttest.MyPNCActivity;
 import com.coconuttest.tyu91.coconuttest.R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class PrivacyNoticeCenterListAdapter extends ArrayAdapter<PersonalDataGroup> {
