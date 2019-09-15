@@ -5,16 +5,14 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.provider.Telephony;
 import android.os.Bundle;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Cache;
 import com.android.volley.Request;
@@ -31,16 +29,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import me.tianshili.annotationlib.network.Network;
+import me.tianshili.annotationlib.network.NetworkAnnotation;
 import me.tianshili.annotationlib.sms.SMSSource;
 import me.tianshili.annotationlib.sms.SMSSink;
 
 public class SmsTestActivity extends AppCompatActivity {
 
     private int MY_PERMISSIONS_REQUEST_READ_SMS = 1;
-    private RecyclerView rvSms;
-    private SmsTestAdapter smsTestAdapter;
-    private ArrayList<String> smsResults;
+    private ArrayList<String> smsResults = new ArrayList<>();
 
     private RequestQueue mRequestQueue;
     private String currentWeatherURL = "";
@@ -52,11 +48,6 @@ public class SmsTestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sms_test);
 
         //set up SMS recycler view and adapter
-        smsResults = new ArrayList<String>();
-        rvSms = findViewById(R.id.rvSms);
-        smsTestAdapter = new SmsTestAdapter(smsResults);
-        rvSms.setAdapter(smsTestAdapter);
-        rvSms.setLayoutManager(new LinearLayoutManager(this));
 
 
         //set up SMS permission request
@@ -73,16 +64,9 @@ public class SmsTestActivity extends AppCompatActivity {
             /*
              * HS generated code begins
              */
-            final Activity currentActivity = this;
-            PermissionNotice.showDialog(HSStatus.getApplicationContext(), PersonalDataGroup.SMS,
-                    new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    ActivityCompat.requestPermissions(currentActivity,
+            final Activity currentActivity = this; PermissionNotice.showDialog(HSStatus.getApplicationContext(), PersonalDataGroup.SMS, new DialogInterface.OnCancelListener() {@Override public void onCancel(DialogInterface dialog) { ActivityCompat.requestPermissions(currentActivity,
                             new String[]{Manifest.permission.READ_SMS},
-                            MY_PERMISSIONS_REQUEST_READ_SMS);
-                }
-            });
+                            MY_PERMISSIONS_REQUEST_READ_SMS); }});
             /*
              * HS generated code ends
              */
@@ -91,76 +75,13 @@ public class SmsTestActivity extends AppCompatActivity {
 
         //define projection query field
         String[] projectionSms = new String[]{
-//                Telephony.BaseMmsColumns.SEEN,
-//                Telephony.BaseMmsColumns.CONTENT_LOCATION,
-//                Telephony.BaseMmsColumns.CREATOR,
-//                Telephony.BaseMmsColumns.DATE,
-//                Telephony.BaseMmsColumns.DATE_SENT,
-//                Telephony.BaseMmsColumns.DELIVERY_TIME,
-//                Telephony.BaseMmsColumns.MESSAGE_ID,
-//                Telephony.BaseMmsColumns.READ,
-//                Telephony.BaseMmsColumns.READ_STATUS,
-//                Telephony.BaseMmsColumns.RESPONSE_STATUS,
-//                Telephony.BaseMmsColumns.RESPONSE_TEXT,
-//                Telephony.BaseMmsColumns.READ_REPORT,
-//                Telephony.BaseMmsColumns.RETRIEVE_TEXT,
-//                Telephony.BaseMmsColumns.RETRIEVE_TEXT_CHARSET,
-//                Telephony.BaseMmsColumns.SUBJECT,
-//                Telephony.BaseMmsColumns.SUBJECT_CHARSET,
-//                Telephony.BaseMmsColumns.MESSAGE_BOX,
-//
-//                Telephony.CanonicalAddressesColumns.ADDRESS,
-//
-//                Telephony.Mms.SEEN,
-//                Telephony.Mms.CONTENT_LOCATION,
-//                Telephony.Mms.CREATOR,
-//                Telephony.Mms.DATE,
-//                Telephony.Mms.DATE_SENT,
-//                Telephony.Mms.DELIVERY_TIME,
-//                Telephony.Mms.MESSAGE_ID,
-//                Telephony.Mms.READ,
-//                Telephony.Mms.READ_STATUS,
-//                Telephony.Mms.RESPONSE_STATUS,
-//                Telephony.Mms.RESPONSE_TEXT,
-//                Telephony.Mms.READ_REPORT,
-//                Telephony.Mms.RETRIEVE_TEXT,
-//                Telephony.Mms.RETRIEVE_TEXT_CHARSET,
-//                Telephony.Mms.SUBJECT,
-//                Telephony.Mms.SUBJECT_CHARSET,
-//                Telephony.Mms.MESSAGE_BOX,
-//
-//                String.valueOf(Telephony.MmsSms.CONTENT_CONVERSATIONS_URI),
-//                String.valueOf(Telephony.MmsSms.SEARCH_URI),
-//                String.valueOf(Telephony.MmsSms.CONTENT_CONVERSATIONS_URI),
-//                String.valueOf(Telephony.MmsSms.CONTENT_DRAFT_URI),
-//                String.valueOf(Telephony.MmsSms.CONTENT_FILTER_BYPHONE_URI),
-//                String.valueOf(Telephony.MmsSms.CONTENT_LOCKED_URI),
-//                String.valueOf(Telephony.MmsSms.CONTENT_UNDELIVERED_URI),
-//                String.valueOf(Telephony.MmsSms.CONTENT_URI),
-//
-//                Telephony.Sms.SEEN,
-//                Telephony.Sms.CREATOR,
-//                Telephony.Sms.DATE,
-//                Telephony.Sms.DATE_SENT,
-//                Telephony.Sms.READ,
-//                Telephony.Sms.SUBJECT,
-//
-//                Telephony.TextBasedSmsColumns.SEEN,
                 Telephony.TextBasedSmsColumns.CREATOR,
-//                Telephony.TextBasedSmsColumns.DATE,
-//                Telephony.TextBasedSmsColumns.DATE_SENT,
-//                Telephony.TextBasedSmsColumns.READ,
-//                Telephony.TextBasedSmsColumns.SUBJECT,
                 Telephony.TextBasedSmsColumns.BODY,
-
-//                Telephony.Threads.DATE,
-
-
         };
 
         @SMSSource(
-                ID = "SMSSource-1",
-                purposes = {"Not specified by developer"})
+                ID = "SMSSource-0",
+                purposes = {"Read the verification code automatically for two-factor authentication"})
         Cursor cursor;
 
         //query for SMS results
@@ -188,14 +109,12 @@ public class SmsTestActivity extends AppCompatActivity {
         mRequestQueue = new RequestQueue(cache, network);
         mRequestQueue.start();
 
+        @NetworkAnnotation(
+                destinations = {"the app server"})
         @SMSSink(
-                IDs = {"SMSSource-1"},
-                purposes = {"SMS data will be sent to the network because TODO"},
-                dataTypes = {"Not specified by developer"})
-        @LocalOnly(
-                IDs = {})
-        @Network(
-                destinations = {"Not specified by developer"})
+                IDs = {"SMSSource-0"},
+                purposes = {"Send the verification code to the server to check the validity"},
+                dataTypes = {"the verification code"})
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
                 currentWeatherURL + smsResultsString + "test",
                 null, new Response.Listener<JSONObject>() {
@@ -209,14 +128,6 @@ public class SmsTestActivity extends AppCompatActivity {
         });
 
         mRequestQueue.add(request);
-
-        //TODO: figure out a way to parse Uri.parse instead of CONTENT_URI
-        @SMSSource(
-                ID = "SMSSource-0",
-                purposes = {"Not specified by developer"})
-        Cursor uriCursor;
-        uriCursor = this.getBaseContext().getContentResolver().query(Uri.parse("content://sms/inbox"), projectionSms, null, null, null);
     }
-
 
 }
