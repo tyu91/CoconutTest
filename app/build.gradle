@@ -155,16 +155,16 @@ task moveSourceBack (type: Copy) {
     project.logger.lifecycle("moveSourceBack")
 }
 
-backupSources.dependsOn syncWithIDE
+copyAnnotationMap.dependsOn syncWithIDE
+
+backupSources.dependsOn copyAnnotationMap
 
 generateSources.dependsOn backupSources
 
 overwriteWithGeneratedSource.dependsOn generateSources
 
-copyAnnotationMap.dependsOn overwriteWithGeneratedSource
-
 tasks.withType(JavaCompile) {
-    compileTask -> compileTask.dependsOn copyAnnotationMap
+    compileTask -> compileTask.dependsOn overwriteWithGeneratedSource
 }
 
 tasks.withType(JavaCompile) {
