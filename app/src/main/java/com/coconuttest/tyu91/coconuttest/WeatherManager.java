@@ -62,12 +62,6 @@ public class WeatherManager {
                 currentLocation.getLatitude(),
                 currentLocation.getLongitude());
         Log.d(TAG, "currentWeatherURL: " + currentWeatherURL);
-        @NetworkAnnotation(
-                destinations = {"Not specified by developer"})
-        @LocationSink(
-                IDs = {"LocationSource-0"},
-                purposes = {"Not specified by developer"},
-                dataTypes = {"Not specified by developer"})
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, currentWeatherURL, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

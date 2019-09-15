@@ -38,7 +38,22 @@ public class MainActivity extends AppCompatActivity {
 
     final static int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
+        getLocationAndRefreshWeather();
+
+        PNCBtn = findViewById(R.id.PNCBtn);
+        PNCBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
+    }
+    
     // Check phone-wide location permission
     private void checkLocationServiceStatus(final Context context) {
         LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
@@ -83,27 +98,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         getLocationAndRefreshWeather();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        HSStatus.setApplicationContext(MyApplication.getContext());
-        HSStatus.setAnnotationInfoMap(new MyAnnotationInfoMap());
-
-        getLocationAndRefreshWeather();
-
-        PNCBtn = findViewById(R.id.PNCBtn);
-        PNCBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MyPrivacyNoticeCenterActivity.class);
-                startActivity(intent);
-            }
-        });
-
     }
 
     @Override
@@ -172,10 +166,7 @@ public class MainActivity extends AppCompatActivity {
             LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, new LocationListener() {
                 @Override
-                public void onLocationChanged(@LocationSource(
-                        ID = "LocationSource-0",
-                        purposes = {"Not specified by developer"})
-                                              Location location) {
+                public void onLocationChanged(Location location) {
                     // Got last known location. In some rare situations this can be null.
                     if (location != null) {
                         final Runnable r = new Runnable() {
