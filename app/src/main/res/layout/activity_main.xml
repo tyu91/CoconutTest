@@ -4,85 +4,115 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context="me.tianshili.simpleweather.MainActivity">
+    <LinearLayout
+        android:gravity="center_horizontal"
+        android:id="@+id/weather_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:paddingTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="20pt"
+            android:id="@+id/location_name"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="15pt"
+            android:id="@+id/weather_description"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="35pt"
+            android:id="@+id/temperature"/>
 
-    <Button
-        android:id="@+id/calendarBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="@string/calendar_test_activity" />
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/contactsBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/contacts_test_activity"
-        android:layout_below="@id/calendarBtn"
-        android:layout_centerHorizontal="true"/>
+            <TableRow android:gravity="center_horizontal">
 
-    <Button
-        android:id="@+id/smsBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sms_test_activity"
-        android:layout_below="@id/contactsBtn"
-        android:layout_centerHorizontal="true"/>
+                <TextView
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="Humidity"
+                    android:textSize="10pt"/>
 
-    <Button
-        android:id="@+id/callLogsBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/calllogs_test_activity"
-        android:layout_below="@id/smsBtn"
-        android:layout_centerHorizontal="true"/>
+                <TextView
+                    android:id="@+id/humidity"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textSize="10pt"/>
+            </TableRow>
 
-    <Button
-        android:id="@+id/microphoneBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/microphone_test_activity"
-        android:layout_below="@id/callLogsBtn"
-        android:layout_centerHorizontal="true"/>
+            <TableRow android:gravity="center_horizontal">
 
-    <Button
-        android:id="@+id/cameraBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/camera_2_test_activity"
-        android:layout_below="@id/microphoneBtn"
-        android:layout_centerHorizontal="true"/>
+                <TextView
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="Cloudiness"
+                    android:textSize="10pt"/>
 
-    <Button
-        android:id="@+id/cameraByIntentBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/camera_by_intent_test_activity"
-        android:layout_below="@id/cameraBtn"
-        android:layout_centerHorizontal="true"/>
+                <TextView
+                    android:id="@+id/cloudiness"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textSize="10pt"/>
+            </TableRow>
 
-    <Button
-        android:id="@+id/recordVideoBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/record_video"
-        android:layout_below="@id/cameraByIntentBtn"
-        android:layout_centerHorizontal="true"/>
+            <TableRow android:gravity="center_horizontal">
 
-    <Button
-        android:id="@+id/sensorsBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/initialize_sensors"
-        android:layout_below="@id/recordVideoBtn"
-        android:layout_centerHorizontal="true"/>
+                <TextView
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="Sunrise Time"
+                    android:textSize="10pt"/>
 
-    <Button
-        android:id="@+id/PNCBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/PNC"
-        android:layout_below="@id/sensorsBtn"
-        android:layout_centerHorizontal="true"/>
+                <TextView
+                    android:id="@+id/sunrise_time"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textSize="10pt"/>
+            </TableRow>
+
+            <TableRow android:gravity="center_horizontal">
+
+                <TextView
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="Sunset Time"
+                    android:textSize="10pt"/>
+
+                <TextView
+                    android:id="@+id/sunset_time"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textSize="10pt"/>
+            </TableRow>
+
+        </TableLayout>
+        <Button
+            android:id="@+id/PNCBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/PNC"
+            android:layout_centerHorizontal="true"/>
+
+
+
+    </LinearLayout>
 
 </RelativeLayout>

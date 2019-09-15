@@ -22,9 +22,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".MyApplication">
-        <activity android:name=".CallLogsTestActivity"></activity>
-        <activity android:name=".SmsTestActivity" />
-        <activity android:name=".ContactsTestActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,19 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MicrophoneTestActivity">
-            <!--<intent-filter>
-                <action android:name="android.provider.MediaStore.RECORD_SOUND" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>-->
-        </activity>
-        <activity android:name=".CalendarTestActivity" />
-        <activity android:name=".Camera2APITestActivity" />
-        <activity android:name=".CameraByIntentTestActivity" />
-        <activity android:name=".VideoRecordingTestActivity" />
-        <activity android:name=".VideoRecordingByIntentTestActivity" />
-        <activity android:name=".SensorTestActivity" />
-        <activity android:name=".MyPNCActivity" />
+        <activity android:name=".MyPrivacyNoticeCenterActivity" />
         <activity android:name=".HoneysuckleLib.DataGroupNoticeActivity" />
     </application>
 
