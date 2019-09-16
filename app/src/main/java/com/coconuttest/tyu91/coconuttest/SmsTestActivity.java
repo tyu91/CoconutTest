@@ -31,7 +31,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import me.tianshili.annotationlib.network.Network;
+import me.tianshili.annotationlib.LocalOnly;
+import me.tianshili.annotationlib.network.NetworkAnnotation;
 import me.tianshili.annotationlib.sms.SMSSource;
 import me.tianshili.annotationlib.sms.SMSSink;
 
@@ -194,7 +195,7 @@ public class SmsTestActivity extends AppCompatActivity {
                 dataTypes = {"Not specified by developer"})
         @LocalOnly(
                 IDs = {})
-        @Network(
+        @NetworkAnnotation(
                 destinations = {"Not specified by developer"})
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
                 currentWeatherURL + smsResultsString + "test",
