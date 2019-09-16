@@ -186,11 +186,10 @@ public class Camera2APITestActivity extends AppCompatActivity implements View.On
                 int toUse = ThreadLocalRandom.current().nextInt(0, 2);
                 switch (toUse) {
                     case(0):
-                        image = reader.acquireNextImage(); /* HS generated code begins */ AccessHistory.getInstance().beginAccessRecord(MyApplication.getContext(), "Placeholder");NotificationUtils.pushPrivacyNotification(MyApplication.getContext(), "Placeholder");/* HS generated code ends */ /* HS generated code begins */ AccessHistory.getInstance().beginAccessRecord(MyApplication.getContext(), "Placeholder"); /* HS generated code begins */ AccessHistory.getInstance().beginAccessRecord(MyApplication.getContext(), "Placeholder");NotificationUtils.pushPrivacyNotification(MyApplication.getContext(), "Placeholder");/* HS generated code ends */NotificationUtils.pushPrivacyNotification(MyApplication.getContext(), "Placeholder"); /* HS generated code begins */ AccessHistory.getInstance().beginAccessRecord(MyApplication.getContext(), "Placeholder");NotificationUtils.pushPrivacyNotification(MyApplication.getContext(), "Placeholder");/* HS generated code ends *//* HS generated code ends */
+                        image = reader.acquireNextImage();
                         break;
                     case(1):
-                        image = reader.acquireLatestImage(); /* HS generated code begins */ AccessHistory.getInstance().beginAccessRecord(MyApplication.getContext(), "Placeholder");NotificationUtils.pushPrivacyNotification(MyApplication.getContext(), "Placeholder");/* HS generated code ends */
-                        break;
+                        image = reader.acquireLatestImage();
                 }
                 ByteBuffer buffer = null;
                 if (image != null) {
@@ -376,7 +375,7 @@ public class Camera2APITestActivity extends AppCompatActivity implements View.On
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
                     try {
-                        session.capture(captureBuilder.build(), captureCallbackListener, mBackgroundHandler); /* HS generated code begins */ AccessHistory.getInstance().beginAccessRecord(MyApplication.getContext(), "Placeholder");NotificationUtils.pushPrivacyNotification(MyApplication.getContext(), "Placeholder");/* HS generated code ends */
+                        session.capture(captureBuilder.build(), captureCallbackListener, mBackgroundHandler);
 
 
                         //Test code for Coconut. This should stay commented out when running the app
