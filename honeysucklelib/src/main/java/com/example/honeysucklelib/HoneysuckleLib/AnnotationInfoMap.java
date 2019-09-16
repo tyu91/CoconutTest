@@ -1,4 +1,4 @@
-package com.coconuttest.tyu91.coconuttest.HoneysuckleLib;
+package com.example.honeysucklelib.HoneysuckleLib;
 
 import java.util.ArrayList;
 import java.util.HashMap;

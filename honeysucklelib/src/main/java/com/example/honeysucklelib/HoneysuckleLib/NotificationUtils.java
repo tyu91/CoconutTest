@@ -1,4 +1,4 @@
-package com.coconuttest.tyu91.coconuttest.HoneysuckleLib;
+package com.example.honeysucklelib.HoneysuckleLib;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -9,12 +9,12 @@ import android.text.Spanned;
 
 import androidx.annotation.RequiresApi;
 
-import com.coconuttest.tyu91.coconuttest.R;
+import com.example.honeysucklelib.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static android.text.Html.FROM_HTML_MODE_LEGACY;
-import static com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessType.ONE_TIME;
-import static com.coconuttest.tyu91.coconuttest.HoneysuckleLib.AccessType.RECURRING;
+import static com.example.honeysucklelib.HoneysuckleLib.AccessType.ONE_TIME;
+import static com.example.honeysucklelib.HoneysuckleLib.AccessType.RECURRING;
 
 public class NotificationUtils {
 

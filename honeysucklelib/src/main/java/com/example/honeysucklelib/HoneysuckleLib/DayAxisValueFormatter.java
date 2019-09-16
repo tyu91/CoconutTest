@@ -1,4 +1,4 @@
-package com.coconuttest.tyu91.coconuttest.HoneysuckleLib;
+package com.example.honeysucklelib.HoneysuckleLib;
 
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.formatter.ValueFormatter;

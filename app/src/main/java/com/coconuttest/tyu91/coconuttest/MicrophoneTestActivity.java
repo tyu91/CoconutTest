@@ -31,7 +31,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static android.Manifest.permission;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.*;
+import com.example.honeysucklelib.HoneysuckleLib.*;
 
 
 

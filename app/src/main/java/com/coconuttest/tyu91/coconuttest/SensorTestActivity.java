@@ -23,7 +23,7 @@ import androidx.core.app.ActivityCompat;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.*;
+import com.example.honeysucklelib.HoneysuckleLib.*;
 
 /**
  * Tests Coconut's ability to annotate APIs related to sensor data

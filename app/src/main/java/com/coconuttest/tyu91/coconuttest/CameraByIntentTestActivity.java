@@ -19,7 +19,7 @@ import androidx.core.app.ActivityCompat;
 
 import me.tianshili.annotationlib.camera.CameraSource;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.*;
+import com.example.honeysucklelib.HoneysuckleLib.*;
 
 
 /**

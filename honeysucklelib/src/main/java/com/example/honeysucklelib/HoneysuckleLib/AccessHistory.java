@@ -1,4 +1,4 @@
-package com.coconuttest.tyu91.coconuttest.HoneysuckleLib;
+package com.example.honeysucklelib.HoneysuckleLib;
 
 import android.content.Context;
 import android.os.Build;
@@ -11,8 +11,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.coconuttest.tyu91.coconuttest.HoneysuckleLib.DataAccessRecordListAdapter.ONE_DAY_TIME;
 
 public class AccessHistory {
     static HashMap<String, ArrayList<AccessRecord>> accessRecordMap;
@@ -46,14 +44,14 @@ public class AccessHistory {
     private List<Float> getAccessHoursInLastWeek(String ID) {
         ArrayList<Float> accessHoursInLastWeek =new ArrayList<>(Arrays.asList(new Float[7]));
         Collections.fill(accessHoursInLastWeek, 0f);
-        long week_begin = System.currentTimeMillis() - ONE_DAY_TIME * 7;
+        long week_begin = System.currentTimeMillis() - DataAccessRecordListAdapter.ONE_DAY_TIME * 7;
         for (Map.Entry<String, ArrayList<AccessRecord>> entry : accessRecordMap.entrySet()) {
             if (entry.getKey() != ID) {
                 continue;
             }
             for (AccessRecord record : entry.getValue()) {
                 if (record.beingTimestamp != -1 && record.endTimestamp != -1) {
-                    int index = (int) ((record.beingTimestamp - week_begin) / ONE_DAY_TIME);
+                    int index = (int) ((record.beingTimestamp - week_begin) / DataAccessRecordListAdapter.ONE_DAY_TIME);
                     accessHoursInLastWeek.set(index,
                             accessHoursInLastWeek.get(index) + (record.endTimestamp - record.beingTimestamp)/(ONE_HOUR_TIME * 1f));
                 }
@@ -65,13 +63,13 @@ public class AccessHistory {
     private List<Float> getAccessTimesInLastWeek(String ID) {
         ArrayList<Float> accessTimesInLastWeek =new ArrayList<>(Arrays.asList(new Float[7]));
         Collections.fill(accessTimesInLastWeek, 0f);
-        long week_begin = System.currentTimeMillis() - ONE_DAY_TIME * 7;
+        long week_begin = System.currentTimeMillis() - DataAccessRecordListAdapter.ONE_DAY_TIME * 7;
         for (Map.Entry<String, ArrayList<AccessRecord>> entry : accessRecordMap.entrySet()) {
             if (entry.getKey() != ID) {
                 continue;
             }
             for (AccessRecord record : entry.getValue()) {
-                int index = (int) ((record.beingTimestamp - week_begin) / ONE_DAY_TIME);
+                int index = (int) ((record.beingTimestamp - week_begin) / DataAccessRecordListAdapter.ONE_DAY_TIME);
                 accessTimesInLastWeek.set(index,
                         accessTimesInLastWeek.get(index) + 1);
             }

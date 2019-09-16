@@ -45,7 +45,7 @@
         <activity android:name=".VideoRecordingByIntentTestActivity" />
         <activity android:name=".SensorTestActivity" />
         <activity android:name=".MyPNCActivity" />
-        <activity android:name=".HoneysuckleLib.DataGroupNoticeActivity" />
+        <activity android:name="com.example.honeysucklelib.HoneysuckleLib.DataGroupNoticeActivity" />
     </application>
 
 </manifest>

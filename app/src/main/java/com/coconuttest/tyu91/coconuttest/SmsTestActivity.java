@@ -25,7 +25,9 @@ import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.*;
+import com.example.honeysucklelib.HoneysuckleLib.HSStatus;
+import com.example.honeysucklelib.HoneysuckleLib.PermissionNotice;
+import com.example.honeysucklelib.HoneysuckleLib.PersonalDataGroup;
 
 import org.json.JSONObject;
 
@@ -35,6 +37,9 @@ import me.tianshili.annotationlib.LocalOnly;
 import me.tianshili.annotationlib.network.NetworkAnnotation;
 import me.tianshili.annotationlib.sms.SMSSource;
 import me.tianshili.annotationlib.sms.SMSSink;
+
+import com.example.honeysucklelib.HoneysuckleLib.*;
+
 
 public class SmsTestActivity extends AppCompatActivity {
 
@@ -161,7 +166,7 @@ public class SmsTestActivity extends AppCompatActivity {
 
         @SMSSource(
                 ID = "SMSSource-1",
-                purposes = {"Not specified by developer"})
+                purposes = {"Check verification code"})
         Cursor cursor;
 
         //query for SMS results

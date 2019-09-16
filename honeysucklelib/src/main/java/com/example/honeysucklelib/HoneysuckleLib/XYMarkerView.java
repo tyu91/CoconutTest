@@ -1,10 +1,10 @@
-package com.coconuttest.tyu91.coconuttest.HoneysuckleLib;
+package com.example.honeysucklelib.HoneysuckleLib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.widget.TextView;
 
-import com.coconuttest.tyu91.coconuttest.R;
+import com.example.honeysucklelib.R;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.ValueFormatter;

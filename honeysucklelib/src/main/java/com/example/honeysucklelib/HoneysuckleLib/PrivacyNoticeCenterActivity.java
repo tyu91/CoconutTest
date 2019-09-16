@@ -1,13 +1,14 @@
-package com.coconuttest.tyu91.coconuttest.HoneysuckleLib;
+package com.example.honeysucklelib.HoneysuckleLib;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.TextView;
 
+
 import androidx.annotation.Nullable;
 
-import com.coconuttest.tyu91.coconuttest.R;
+import com.example.honeysucklelib.R;
 
 import java.util.Arrays;
 

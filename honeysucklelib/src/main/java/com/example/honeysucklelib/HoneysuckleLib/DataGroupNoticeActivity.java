@@ -1,4 +1,4 @@
-package com.coconuttest.tyu91.coconuttest.HoneysuckleLib;
+package com.example.honeysucklelib.HoneysuckleLib;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,11 +8,9 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import com.coconuttest.tyu91.coconuttest.R;
+import com.example.honeysucklelib.R;
 
 import java.util.Arrays;
-
-import static com.coconuttest.tyu91.coconuttest.HoneysuckleLib.PrivacyNoticeCenterListAdapter.dataGroupIntentName;
 
 public class DataGroupNoticeActivity extends Activity {
     PersonalDataGroup mDataGroup;
@@ -23,7 +21,7 @@ public class DataGroupNoticeActivity extends Activity {
         setContentView(R.layout.pnc_data_group_activity);
 
         Intent intent = getIntent();
-        String dataGroupValue = intent.getStringExtra(dataGroupIntentName);
+        String dataGroupValue = intent.getStringExtra(PrivacyNoticeCenterListAdapter.dataGroupIntentName);
         mDataGroup = PersonalDataGroup.valueOf(dataGroupValue);
         mDataGroupString = mDataGroup.toString().replace("_", " ");
         TextView PNCHeaderTitleView = findViewById(R.id.allysiqi_configure_permission_title);

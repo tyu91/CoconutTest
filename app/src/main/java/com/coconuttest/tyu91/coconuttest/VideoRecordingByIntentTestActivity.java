@@ -16,7 +16,7 @@ import android.widget.VideoView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.*;
+import com.example.honeysucklelib.HoneysuckleLib.*;
 
 
 /**

@@ -7,8 +7,9 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.HSStatus;
-import com.coconuttest.tyu91.coconuttest.HoneysuckleGenerated.*;
+import com.example.honeysucklelib.HoneysuckleLib.*;
+
+import HoneysuckleGenerated.MyAnnotationInfoMap;
 
 public class MainActivity extends AppCompatActivity {
 

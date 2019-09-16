@@ -1,4 +1,4 @@
-package com.coconuttest.tyu91.coconuttest.HoneysuckleLib;
+package com.example.honeysucklelib.HoneysuckleLib;
 
 public class SharedDataLoggingUtils {
     public static void logDataLeakRecord(String[] IDs, String dataContent) {

@@ -41,7 +41,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.*;
+import com.example.honeysucklelib.HoneysuckleLib.*;
 
 
 public class VideoRecordingTestActivity extends AppCompatActivity implements View.OnClickListener {

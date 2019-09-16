@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.*;
+import com.example.honeysucklelib.HoneysuckleLib.*;
 
 /**
  * This activity serves to test Coconut's ability to annotate personal data

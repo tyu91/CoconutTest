@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 import me.tianshili.annotationlib.calendar.CalendarSource;
 
-import com.coconuttest.tyu91.coconuttest.HoneysuckleLib.*;
+import com.example.honeysucklelib.HoneysuckleLib.*;
 
 public class CalendarTestActivity extends AppCompatActivity {
     private int MY_PERMISSIONS_REQUEST_READ_CALENDAR = 1;
