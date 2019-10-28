@@ -13,11 +13,6 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import me.tianshili.annotationlib.calendar.CalendarAnnotation;
-import me.tianshili.annotationlib.calendar.CalendarDataType;
-import me.tianshili.annotationlib.calendar.CalendarPurpose;
-import me.tianshili.annotationlib.commons.Visibility;
-
 public class CalendarTestActivity extends AppCompatActivity {
     private int MY_PERMISSIONS_REQUEST_READ_CALENDAR = 1;
     private int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR = 2;
@@ -74,12 +69,6 @@ public class CalendarTestActivity extends AppCompatActivity {
                 + CalendarContract.Attendees.ATTENDEE_EMAIL + " = ?) AND ("
                 + CalendarContract.Calendars.OWNER_ACCOUNT + " = ?))";
 
-
-        @CalendarAnnotation(
-                purpose = {CalendarPurpose.UNKNOWN},
-                purposeDescription = {""},
-                dataType = {CalendarDataType.EVENT_TITLE, CalendarDataType.EVENT_TIME},
-                visibility = {Visibility.IN_BACKGROUND})
         Cursor c;
 
         //query for calendar results

@@ -13,11 +13,6 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import me.tianshili.annotationlib.sms.SMSAnnotation;
-import me.tianshili.annotationlib.sms.SMSDataType;
-import me.tianshili.annotationlib.sms.SMSPurpose;
-import me.tianshili.annotationlib.commons.Visibility;
-
 public class SmsTestActivity extends AppCompatActivity {
 
     private int MY_PERMISSIONS_REQUEST_READ_SMS = 1;
@@ -114,11 +109,6 @@ public class SmsTestActivity extends AppCompatActivity {
 
         };
 
-        @SMSAnnotation(
-                purpose = {SMSPurpose.UNKNOWN},
-                purposeDescription = {""},
-                dataType = {SMSDataType.CREATOR, SMSDataType.MESSAGES},
-                visibility = {Visibility.UNKNOWN})
         Cursor cursor;
 
         //query for SMS results
