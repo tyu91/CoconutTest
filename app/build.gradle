@@ -32,19 +32,21 @@ class CoconutEntry {
     public String fileName;
     public String dataGroup
     public String insertValue;
+    public String insertPosition;
 
     public CoconutEntry() {
     }
 
-    public CoconutEntry(Integer lineNumber, String fileName, String dataGroup, String insertValue) {
+    public CoconutEntry(Integer lineNumber, String fileName, String dataGroup, String insertValue, String insertPosition) {
         this.lineNumber = lineNumber;
         this.fileName = fileName;
         this.dataGroup = dataGroup;
         this.insertValue = insertValue;
+        this.insertPosition = insertPosition;
     }
 
     public String toString() {
-        String toReturn = String.valueOf(lineNumber) + ", " + fileName + ", " + dataGroup + ", " + insertValue;
+        String toReturn = String.valueOf(lineNumber) + ", " + fileName + ", " + dataGroup + ", " + insertValue + "(" + insertPosition + ")";
         return toReturn;
     }
 }
@@ -97,6 +99,8 @@ task generateSources() {
                         if(lineArray.length > 1) break
                     }
                 }
+            } else if(commandLineArray[0].contains("InsertPosition")) {
+                tempEntry.insertPosition = commandLineArray[1]
             } else if(commandLineArray[0].equals('ENTRY')) {
                 tempEntry = new CoconutEntry()
             } else if(commandLineArray[0].equals('ENDENTRY')) {
@@ -124,7 +128,14 @@ task generateSources() {
             for(Integer i = 0; i < entries.size(); i++)
             {
                 if(fileLineNumber == entries.get(i).lineNumber && currentFile == entries.get(i).fileName) {
-                    line = line.replace(";", "; ${entries.get(i).insertValue}")
+//                    line = line.replace(";", "; ${entries.get(i).insertValue}")
+                    if (entries.get(i).insertPosition.equals("after")) {
+                        line = line + entries.get(i).insertValue
+                    } else if (entries.get(i).insertPosition.equals("before")) {
+                        line = entries.get(i).insertValue + line
+                    } else if (entries.get(i).insertPosition.equals("replace")) {
+                        line = entries.get(i).insertValue
+                    }
                 }
             }
             fileLineNumber++
