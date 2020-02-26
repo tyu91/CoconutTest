@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: PrivacyNoticePlugin
 
 android {
     compileSdkVersion 28
@@ -26,6 +27,155 @@ android {
 //    }
 }
 
+class PrivacyNoticePluginExtension {
+    String buildDir
+}
+
+privacyNotice {
+    buildDir = "/Users/tianshi/AndroidStudioProjects/CoconutTest/app/build"
+}
+
+class PrivacyNoticePlugin implements Plugin<Project> {
+    String buildDir = "/Users/tianshi/AndroidStudioProjects/CoconutTest/app/build"
+
+    void apply(Project project) {
+        def extension = project.extensions.create('privacyNotice', PrivacyNoticePluginExtension)
+
+        Task syncWithIDE = project.task('syncWithIDE') {
+            String IDEServerResult;
+            Socket clientSocket = new Socket("localhost", 3344);
+            DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            outToServer.writeBytes('start insert file generation\n');
+            IDEServerResult = inFromServer.readLine();
+            System.out.println("FROM SERVER: " + IDEServerResult);
+            clientSocket.close();
+        }
+
+        Task backupSources = project.task (type: Copy, 'backupSources') {
+            from "src/main/java"
+            into("${buildDir}/backup-src")
+            project.logger.lifecycle("backupSources")
+        }
+        Task generateSources = project.task ('generateSources') {
+            List<CoconutEntry> entries = new ArrayList<>()
+            CoconutEntry tempEntry
+
+            try
+            {
+                File myFile = new File("${buildDir}/CoconutText.txt")
+                project.logger.lifecycle("${buildDir}/CoconutText.txt")
+                Scanner fileScnr = new Scanner(myFile)
+                while(fileScnr.hasNext())
+                {
+                    String commandLine = fileScnr.nextLine()
+                    String[] commandLineArray = commandLine.split("#") //Seperates the ":" tags from the contents
+                    if(commandLineArray[0].contains('LineNumber')) {
+                        tempEntry.lineNumber = Integer.valueOf(commandLineArray[1])
+                    } else if(commandLineArray[0].contains('FileName')) {
+                        tempEntry.fileName = commandLineArray[1]
+                    } else if (commandLineArray[0].contains('DataGroup')) {
+                        tempEntry.dataGroup = commandLineArray[1]
+                    } else if(commandLineArray[0].contains('InsertValue')) {
+                        try {
+                            tempEntry.insertValue = commandLineArray[1]
+                        } catch(IndexOutOfBoundsException e) {
+                        }
+                        if(commandLineArray.length < 3)
+                        {
+                            while(fileScnr.hasNext()) {
+                                String line = fileScnr.nextLine()
+                                String[] lineArray = line.split("#")
+                                tempEntry.insertValue = tempEntry.insertValue + lineArray[0]
+                                if(lineArray.length > 1) break
+                            }
+                        }
+                    } else if(commandLineArray[0].contains("InsertPosition")) {
+                        tempEntry.insertPosition = commandLineArray[1]
+                    } else if(commandLineArray[0].equals('ENTRY')) {
+                        tempEntry = new CoconutEntry()
+                    } else if(commandLineArray[0].equals('ENDENTRY')) {
+                        entries.add(tempEntry)
+                    } else continue
+                }
+                fileScnr.close()
+                project.logger.lifecycle("$entries")
+            }catch(IOException e) {
+            }
+            project.copy {
+                project.logger.lifecycle("start copying to generated-src...")
+                project.logger.lifecycle("${buildDir}/generated-src")
+                from "src/main/java"
+                into "${buildDir}/generated-src"
+
+                def fileLineNumber = 1
+                def currentFile = ""
+
+                eachFile { fileCopyDetails ->
+                    currentFile = fileCopyDetails.getSourceName()
+                    project.logger.lifecycle("$currentFile")
+                    fileLineNumber = 1
+                }
+                filter { String line ->
+                    for(Integer i = 0; i < entries.size(); i++)
+                    {
+                        if(fileLineNumber == entries.get(i).lineNumber && currentFile == entries.get(i).fileName) {
+//                    line = line.replace(";", "; ${entries.get(i).insertValue}")
+                            if (entries.get(i).insertPosition.equals("after")) {
+                                line = line + entries.get(i).insertValue
+                            } else if (entries.get(i).insertPosition.equals("before")) {
+                                line = entries.get(i).insertValue + line
+                            } else if (entries.get(i).insertPosition.equals("replace")) {
+                                line = entries.get(i).insertValue
+                            }
+                        }
+                    }
+                    fileLineNumber++
+                    return line;
+                }
+                project.logger.lifecycle("copy over files")
+            }
+            project.logger.lifecycle("finish generating sources")
+        }
+
+        Task overwriteWithGeneratedSource = project.task (type: Copy, 'overwriteWithGeneratedSource') {
+            from "${buildDir}/generated-src"
+            into "src/main/java"
+            project.logger.lifecycle("overwriteWithGeneratedSource")
+        }
+
+
+        Task copyAnnotationMap = project.task (type: Copy, 'copyAnnotationMap') {
+            from "${buildDir}/MyAnnotationInfoMap.java"
+            into "src/main/java/HoneysuckleGenerated"
+        }
+
+        Task moveSourceBack = project.task (type: Copy, 'moveSourceBack') {
+            project.logger.lifecycle("moveSourceBack")
+            from "${buildDir}/backup-src"
+            into "src/main/java"
+            project.logger.lifecycle("moveSourceBack")
+        }
+
+        project.afterEvaluate {
+            copyAnnotationMap.dependsOn syncWithIDE
+
+            backupSources.dependsOn copyAnnotationMap
+
+            generateSources.dependsOn backupSources
+
+            overwriteWithGeneratedSource.dependsOn generateSources
+
+            project.tasks.withType(JavaCompile) {
+                compileTask -> compileTask.dependsOn overwriteWithGeneratedSource
+            }
+
+            project.tasks.withType(JavaCompile) {
+                compileTask -> compileTask.finalizedBy moveSourceBack
+            }
+        }
+    }
+}
 
 class CoconutEntry {
     public Integer lineNumber;
@@ -51,136 +201,138 @@ class CoconutEntry {
     }
 }
 
-task syncWithIDE() {
-    String IDEServerResult;
-    Socket clientSocket = new Socket("localhost", 3344);
-    DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-    BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-    outToServer.writeBytes('start insert file generation\n');
-    IDEServerResult = inFromServer.readLine();
-    System.out.println("FROM SERVER: " + IDEServerResult);
-    clientSocket.close();
-}
+//task syncWithIDE() {
+//    String IDEServerResult;
+//    Socket clientSocket = new Socket("localhost", 3344);
+//    DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+//    BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+//    outToServer.writeBytes('start insert file generation\n');
+//    IDEServerResult = inFromServer.readLine();
+//    System.out.println("FROM SERVER: " + IDEServerResult);
+//    clientSocket.close();
+//}
+//
+//task backupSources (type: Copy) {
+//    from "src/main/java"
+//    into("$buildDir/backup-src")
+//    project.logger.lifecycle("backupSources")
+//}
+//task generateSources() {
+//    List<CoconutEntry> entries = new ArrayList<>()
+//    CoconutEntry tempEntry
+//
+//    try
+//    {
+//        File myFile = new File("$buildDir/CoconutText.txt")
+//        Scanner fileScnr = new Scanner(myFile)
+//        while(fileScnr.hasNext())
+//        {
+//            String commandLine = fileScnr.nextLine()
+//            String[] commandLineArray = commandLine.split("#") //Seperates the ":" tags from the contents
+//            if(commandLineArray[0].contains('LineNumber')) {
+//                tempEntry.lineNumber = Integer.valueOf(commandLineArray[1])
+//            } else if(commandLineArray[0].contains('FileName')) {
+//                tempEntry.fileName = commandLineArray[1]
+//            } else if (commandLineArray[0].contains('DataGroup')) {
+//                tempEntry.dataGroup = commandLineArray[1]
+//            } else if(commandLineArray[0].contains('InsertValue')) {
+//                try {
+//                    tempEntry.insertValue = commandLineArray[1]
+//                } catch(IndexOutOfBoundsException e) {
+//                }
+//                if(commandLineArray.length < 3)
+//                {
+//                    while(fileScnr.hasNext()) {
+//                        String line = fileScnr.nextLine()
+//                        String[] lineArray = line.split("#")
+//                        tempEntry.insertValue = tempEntry.insertValue + lineArray[0]
+//                        if(lineArray.length > 1) break
+//                    }
+//                }
+//            } else if(commandLineArray[0].contains("InsertPosition")) {
+//                tempEntry.insertPosition = commandLineArray[1]
+//            } else if(commandLineArray[0].equals('ENTRY')) {
+//                tempEntry = new CoconutEntry()
+//            } else if(commandLineArray[0].equals('ENDENTRY')) {
+//                entries.add(tempEntry)
+//            } else continue
+//        }
+//        fileScnr.close()
+//        project.logger.lifecycle("$entries")
+//    }catch(IOException e) {
+//    }
+//
+//    copy {
+//        from "src/main/java"
+//        into "$buildDir/generated-src"
+//
+//        def fileLineNumber = 1
+//        def currentFile = ""
+//
+//        eachFile { fileCopyDetails ->
+//            currentFile = fileCopyDetails.getSourceName()
+//            project.logger.lifecycle("$currentFile")
+//            fileLineNumber = 1
+//        }
+//        filter { String line ->
+//            for(Integer i = 0; i < entries.size(); i++)
+//            {
+//                if(fileLineNumber == entries.get(i).lineNumber && currentFile == entries.get(i).fileName) {
+////                    line = line.replace(";", "; ${entries.get(i).insertValue}")
+//                    if (entries.get(i).insertPosition.equals("after")) {
+//                        line = line + entries.get(i).insertValue
+//                    } else if (entries.get(i).insertPosition.equals("before")) {
+//                        line = entries.get(i).insertValue + line
+//                    } else if (entries.get(i).insertPosition.equals("replace")) {
+//                        line = entries.get(i).insertValue
+//                    }
+//                }
+//            }
+//            fileLineNumber++
+//            return line;
+//        }
+//        project.logger.lifecycle("copy over files")
+//    }
+//
+//    project.logger.lifecycle("finish generating sources")
+//}
 
-task backupSources (type: Copy) {
-    from "src/main/java"
-    into("$buildDir/backup-src")
-    project.logger.lifecycle("backupSources")
-}
-task generateSources() {
-    List<CoconutEntry> entries = new ArrayList<>()
-    CoconutEntry tempEntry
-
-    try
-    {
-        File myFile = new File("$buildDir/CoconutText.txt")
-        Scanner fileScnr = new Scanner(myFile)
-        while(fileScnr.hasNext())
-        {
-            String commandLine = fileScnr.nextLine()
-            String[] commandLineArray = commandLine.split("#") //Seperates the ":" tags from the contents
-            if(commandLineArray[0].contains('LineNumber')) {
-                tempEntry.lineNumber = Integer.valueOf(commandLineArray[1])
-            } else if(commandLineArray[0].contains('FileName')) {
-                tempEntry.fileName = commandLineArray[1]
-            } else if (commandLineArray[0].contains('DataGroup')) {
-                tempEntry.dataGroup = commandLineArray[1]
-            } else if(commandLineArray[0].contains('InsertValue')) {
-                try {
-                    tempEntry.insertValue = commandLineArray[1]
-                } catch(IndexOutOfBoundsException e) {
-                }
-                if(commandLineArray.length < 3)
-                {
-                    while(fileScnr.hasNext()) {
-                        String line = fileScnr.nextLine()
-                        String[] lineArray = line.split("#")
-                        tempEntry.insertValue = tempEntry.insertValue + lineArray[0]
-                        if(lineArray.length > 1) break
-                    }
-                }
-            } else if(commandLineArray[0].contains("InsertPosition")) {
-                tempEntry.insertPosition = commandLineArray[1]
-            } else if(commandLineArray[0].equals('ENTRY')) {
-                tempEntry = new CoconutEntry()
-            } else if(commandLineArray[0].equals('ENDENTRY')) {
-                entries.add(tempEntry)
-            } else continue
-        }
-        fileScnr.close()
-        project.logger.lifecycle("$entries")
-    }catch(IOException e) {
-    }
-
-    copy {
-        from "src/main/java"
-        into "$buildDir/generated-src"
-
-        def fileLineNumber = 1
-        def currentFile = ""
-
-        eachFile { fileCopyDetails ->
-            currentFile = fileCopyDetails.getSourceName()
-            project.logger.lifecycle("$currentFile")
-            fileLineNumber = 1
-        }
-        filter { String line ->
-            for(Integer i = 0; i < entries.size(); i++)
-            {
-                if(fileLineNumber == entries.get(i).lineNumber && currentFile == entries.get(i).fileName) {
-//                    line = line.replace(";", "; ${entries.get(i).insertValue}")
-                    if (entries.get(i).insertPosition.equals("after")) {
-                        line = line + entries.get(i).insertValue
-                    } else if (entries.get(i).insertPosition.equals("before")) {
-                        line = entries.get(i).insertValue + line
-                    } else if (entries.get(i).insertPosition.equals("replace")) {
-                        line = entries.get(i).insertValue
-                    }
-                }
-            }
-            fileLineNumber++
-            return line;
-        }
-        project.logger.lifecycle("copy over files")
-    }
-
-    project.logger.lifecycle("finish generating sources")
-}
-
-task overwriteWithGeneratedSource(type: Copy) {
-    from "$buildDir/generated-src"
-    into "src/main/java"
-    project.logger.lifecycle("overwriteWithGeneratedSource")
-}
+//task overwriteWithGeneratedSource(type: Copy) {
+//    from "$buildDir/generated-src"
+//    into "src/main/java"
+//    project.logger.lifecycle("overwriteWithGeneratedSource")
+//}
 
 
-task copyAnnotationMap(type: Copy) {
-    from "$buildDir/MyAnnotationInfoMap.java"
-    into "src/main/java/HoneysuckleGenerated"
-}
+//task copyAnnotationMap(type: Copy) {
+//    from "$buildDir/MyAnnotationInfoMap.java"
+//    into "src/main/java/HoneysuckleGenerated"
+//}
 
-task moveSourceBack (type: Copy) {
-    project.logger.lifecycle("moveSourceBack")
-    from "$buildDir/backup-src"
-    into "src/main/java"
-    project.logger.lifecycle("moveSourceBack")
-}
+//task moveSourceBack (type: Copy) {
+//    project.logger.lifecycle("moveSourceBack")
+//    from "$buildDir/backup-src"
+//    into "src/main/java"
+//    project.logger.lifecycle("moveSourceBack")
+//}
 
-copyAnnotationMap.dependsOn syncWithIDE
-
-backupSources.dependsOn copyAnnotationMap
-
-generateSources.dependsOn backupSources
-
-overwriteWithGeneratedSource.dependsOn generateSources
-
-tasks.withType(JavaCompile) {
-    compileTask -> compileTask.dependsOn overwriteWithGeneratedSource
-}
-
-tasks.withType(JavaCompile) {
-    compileTask -> compileTask.finalizedBy moveSourceBack
-}
+//copyAnnotationMap.dependsOn syncWithIDE
+//
+//backupSources.dependsOn copyAnnotationMap
+//
+//generateEntries.dependsOn backupSources
+//
+//generateSources.dependsOn generateEntries
+//
+//overwriteWithGeneratedSource.dependsOn generateSources
+//
+//tasks.withType(JavaCompile) {
+//    compileTask -> compileTask.dependsOn overwriteWithGeneratedSource
+//}
+//
+//tasks.withType(JavaCompile) {
+//    compileTask -> compileTask.finalizedBy moveSourceBack
+//}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
