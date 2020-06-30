@@ -1,5 +1,6 @@
 package com.example.honeysucklelib.HoneysuckleLib;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,18 +15,53 @@ import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static android.text.Html.FROM_HTML_MODE_LEGACY;
+import static com.example.honeysucklelib.HoneysuckleLib.PersonalDataGroup.*;
 
 public class PermissionNotice {
 
+    private static HashMap<String, PersonalDataGroup> permissionDataGroupMap = new HashMap<>();
+    static {
+        permissionDataGroupMap.put(Manifest.permission.ACCESS_BACKGROUND_LOCATION, Location);
+        permissionDataGroupMap.put(Manifest.permission.ACCESS_COARSE_LOCATION, Location);
+        permissionDataGroupMap.put(Manifest.permission.ACCESS_FINE_LOCATION, Location);
+        permissionDataGroupMap.put(Manifest.permission.ACCESS_MEDIA_LOCATION, Location);
+        permissionDataGroupMap.put(Manifest.permission.WRITE_CONTACTS, Contacts);
+        permissionDataGroupMap.put(Manifest.permission.READ_CONTACTS, Contacts);
+        permissionDataGroupMap.put(Manifest.permission.WRITE_CALENDAR, Calendar);
+        permissionDataGroupMap.put(Manifest.permission.READ_CALENDAR, Calendar);
+        permissionDataGroupMap.put(Manifest.permission.CAMERA, Camera);
+        permissionDataGroupMap.put(Manifest.permission.RECORD_AUDIO, Microphone);
+        permissionDataGroupMap.put(Manifest.permission.WRITE_CALL_LOG, CallLogs);
+        permissionDataGroupMap.put(Manifest.permission.READ_CALL_LOG, CallLogs);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            permissionDataGroupMap.put(Manifest.permission.BODY_SENSORS, Sensor);
+        }
+        permissionDataGroupMap.put(Manifest.permission.SEND_SMS, SMS);
+        permissionDataGroupMap.put(Manifest.permission.READ_SMS, SMS);
+        permissionDataGroupMap.put(Manifest.permission.RECEIVE_SMS, SMS);
+        permissionDataGroupMap.put(Manifest.permission.BROADCAST_SMS, SMS);
+        permissionDataGroupMap.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, User_File);
+        permissionDataGroupMap.put(Manifest.permission.READ_EXTERNAL_STORAGE, User_File);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public static void showAllDialog(Context context, PersonalDataGroup [] personalDataGroups, DialogInterface.OnCancelListener onCancelListener) {
+    public static void showAllDialog(Context context, String[] permissionStrings, DialogInterface.OnCancelListener onCancelListener) {
         if (context == null) {
             return;
         }
-        assert personalDataGroups.length > 0;
-        showDialog(context, personalDataGroups, 0, onCancelListener);
+        ArrayList<PersonalDataGroup> personalDataGroupList = new ArrayList<>();
+        for (String permissionString: permissionStrings) {
+            if (permissionDataGroupMap.containsKey(permissionString) &&
+                    !personalDataGroupList.contains(permissionDataGroupMap.get(permissionString))) {
+                personalDataGroupList.add(permissionDataGroupMap.get(permissionString));
+            }
+        }
+        if (personalDataGroupList.size() > 0) {
+            showDialog(context, personalDataGroupList.toArray(new PersonalDataGroup[0]), 0, onCancelListener);
+        }
     }
 
     private static void showDialog(final Context context, final PersonalDataGroup [] personalDataGroups, final int position, final DialogInterface.OnCancelListener finalOnCancelListener) {
