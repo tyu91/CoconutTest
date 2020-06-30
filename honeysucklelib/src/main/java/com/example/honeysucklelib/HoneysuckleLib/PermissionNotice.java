@@ -20,10 +20,28 @@ import static android.text.Html.FROM_HTML_MODE_LEGACY;
 public class PermissionNotice {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public static void showDialog(Context context, PersonalDataGroup personalDataGroup, DialogInterface.OnCancelListener onCancelListener) {
+    public static void showAllDialog(Context context, PersonalDataGroup [] personalDataGroups, DialogInterface.OnCancelListener onCancelListener) {
         if (context == null) {
             return;
         }
+        assert personalDataGroups.length > 0;
+        showDialog(context, personalDataGroups, 0, onCancelListener);
+    }
+
+    private static void showDialog(final Context context, final PersonalDataGroup [] personalDataGroups, final int position, final DialogInterface.OnCancelListener finalOnCancelListener) {
+        DialogInterface.OnCancelListener onCancelListener;
+        if (position == personalDataGroups.length - 1) {
+            onCancelListener = finalOnCancelListener;
+        } else {
+            onCancelListener = new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialogInterface) {
+                    showDialog(context, personalDataGroups, position + 1, finalOnCancelListener);
+                }
+            };
+        }
+        PersonalDataGroup personalDataGroup = personalDataGroups[position];
+
         AnnotationInfo [] annotationInfoList =
                 HSStatus.getMyAnnotationInfoMap().getAnnotationInfoListByDataGroup(personalDataGroup);
         ArrayList<String> purposeList = new ArrayList<>();
