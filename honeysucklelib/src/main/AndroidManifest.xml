@@ -1,2 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.honeysucklelib" />
+    package="com.example.honeysucklelib">
+<application>
+    <provider
+        android:authorities="honeysuckle"
+        android:name="com.example.honeysucklelib.HoneysuckleLib.InstanceProvider"
+        android:exported="false" />
+</application>
+</manifest>
