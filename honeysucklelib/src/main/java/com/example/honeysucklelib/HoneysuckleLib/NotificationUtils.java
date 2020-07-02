@@ -57,9 +57,9 @@ public class NotificationUtils {
                 context.getResources().getConfiguration().locale)
                 .format(new java.util.Date (System.currentTimeMillis()));
         if (accessType == ONE_TIME || accessType == RECURRING) {
-            title = String.format("Accessed %s data (%d times in the last hour)", dataGroup, AccessHistory.getInstance().getAccessTimesInLastHour(ID));
+            title = String.format("Accessed your %s at %s (%d times in the last hour)", dataGroup, currentTime, AccessHistory.getInstance().getAccessTimesInLastHour(ID));
         } else {
-            title = String.format("Accessing %s data since %s", dataGroup, currentTime);
+            title = String.format("Currently using your %s (since %s)", dataGroup, currentTime);
         }
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", context.getPackageName(), null);
@@ -78,6 +78,5 @@ public class NotificationUtils {
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(HSStatus.getMyAnnotationInfoMap().getNotificationIDByID(ID), notification);
-
     }
 }
