@@ -37,14 +37,18 @@ public class PermissionNotice {
         permissionDataGroupMap.put(Manifest.permission.WRITE_CALL_LOG, CallLogs);
         permissionDataGroupMap.put(Manifest.permission.READ_CALL_LOG, CallLogs);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-            permissionDataGroupMap.put(Manifest.permission.BODY_SENSORS, Sensor);
+            permissionDataGroupMap.put(Manifest.permission.BODY_SENSORS, BodySensor);
         }
-        permissionDataGroupMap.put(Manifest.permission.SEND_SMS, SMS);
-        permissionDataGroupMap.put(Manifest.permission.READ_SMS, SMS);
-        permissionDataGroupMap.put(Manifest.permission.RECEIVE_SMS, SMS);
-        permissionDataGroupMap.put(Manifest.permission.BROADCAST_SMS, SMS);
-        permissionDataGroupMap.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, User_File);
-        permissionDataGroupMap.put(Manifest.permission.READ_EXTERNAL_STORAGE, User_File);
+        permissionDataGroupMap.put(Manifest.permission.SEND_SMS, Sms);
+        permissionDataGroupMap.put(Manifest.permission.READ_SMS, Sms);
+        permissionDataGroupMap.put(Manifest.permission.RECEIVE_SMS, Sms);
+        permissionDataGroupMap.put(Manifest.permission.BROADCAST_SMS, Sms);
+        permissionDataGroupMap.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, UserFile);
+        permissionDataGroupMap.put(Manifest.permission.READ_EXTERNAL_STORAGE, UserFile);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            permissionDataGroupMap.put(Manifest.permission.READ_PHONE_NUMBERS, UniqueId);
+        }
+        permissionDataGroupMap.put(Manifest.permission.READ_PHONE_STATE, UniqueId);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -65,7 +69,7 @@ public class PermissionNotice {
     }
 
     private static void showDialog(final Context context, final PersonalDataGroup [] personalDataGroups, final int position, final DialogInterface.OnCancelListener finalOnCancelListener) {
-        DialogInterface.OnCancelListener onCancelListener;
+        final DialogInterface.OnCancelListener onCancelListener;
         if (position == personalDataGroups.length - 1) {
             onCancelListener = finalOnCancelListener;
         } else {
@@ -106,21 +110,28 @@ public class PermissionNotice {
         Spanned egressDescriptionText;
         if (dataLeaked) {
             if (destinationsString == null && dataTypesString == null) {
-                egressDescriptionText = Html.fromHtml(String.format("<p>This app may send the %s data or information derived from the %s data out of the phone.</p><b>Purpose from the developer:</b><br>%s", personalDataGroup, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
+                egressDescriptionText = Html.fromHtml(String.format("<p>This app may send the %s data or information derived from the %s data out of the phone.</p><b>%s may be used for:</b><br>%s", personalDataGroup, personalDataGroup, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
             } else if (destinationsString == null && dataTypesString != null) {
-                egressDescriptionText = Html.fromHtml(String.format("<p>This app will send %s out of the phone</p><b>Purpose from the developer:</b><br>%s", dataTypesString, destinationsString, purposesString), FROM_HTML_MODE_LEGACY);
+                egressDescriptionText = Html.fromHtml(String.format("<p>This app will send %s out of the phone</p><b>%s may be used for:</b><br>%s", dataTypesString, destinationsString, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
             } else if (destinationsString != null && dataTypesString == null) {
-                egressDescriptionText = Html.fromHtml(String.format("<p>This app will send the %s data or information derived from the %s data to %s</p><b>Purpose from the developer:</b><br>%s", personalDataGroup, personalDataGroup, destinationsString, purposesString), FROM_HTML_MODE_LEGACY);
+                egressDescriptionText = Html.fromHtml(String.format("<p>This app will send the %s data or information derived from the %s data to %s</p><b>%s may be used for:</b><br>%s", personalDataGroup, personalDataGroup, destinationsString, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
             } else {
-                egressDescriptionText = Html.fromHtml(String.format("<p>This app will send %s to %s</p><b>Purpose from the developer:</b><br>%s", dataTypesString, destinationsString, purposesString), FROM_HTML_MODE_LEGACY);
+                egressDescriptionText = Html.fromHtml(String.format("<p>This app will send %s to %s</p><b>%s may be used for:</b><br>%s", dataTypesString, destinationsString, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
             }
         } else {
-            egressDescriptionText = Html.fromHtml(String.format("<p>This app will not send the %s data or information derived from the %s data out of the phone.</p><b>Purpose from the developer:</b><br>%s", personalDataGroup, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
+            egressDescriptionText = Html.fromHtml(String.format("<p>This app will not send the %s data or information derived from the %s data out of the phone.</p><b>%s may be used for:</b><br>%s", personalDataGroup, personalDataGroup, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
         }
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context)
-                .setTitle(Html.fromHtml(String.format("Privacy facts about <b>%s</b> access in this app", personalDataGroup.toString())))
-                .setMessage(egressDescriptionText);
+                .setTitle(Html.fromHtml(String.format("Privacy facts about <b>%s</b> access in %s", personalDataGroup.toString(), Utils.getApplicationName(HSStatus.getApplicationContext()))))
+                .setMessage(egressDescriptionText)
+                .setNeutralButton("Got it", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onCancelListener.onCancel(dialog);
+                    }
+                })
+                .setCancelable(false);
         final AlertDialog dialog = dialogBuilder.create();
         dialog.setOnCancelListener(onCancelListener);
         final Window dialogWindow = dialog.getWindow();

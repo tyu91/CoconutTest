@@ -29,6 +29,12 @@ public class AccessHistory {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
+    public boolean isFirstTimeAccess(String ID) {
+        // FIXME: use the data in local storage
+        return getAccessTimesInLastHour(ID) == 1;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public int getAccessTimesInLastHour(String ID) {
         return accessRecordMap.getOrDefault(ID, new ArrayList<AccessRecord>()).size();
     }

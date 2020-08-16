@@ -51,7 +51,7 @@ public class DataAccessRecordListAdapter extends ArrayAdapter<AnnotationInfo> im
         View view = inflater.inflate(R.layout.data_access_item_layout, parent, false);
         TextView purposeView = view.findViewById(R.id.data_access_purposes);
         TextView egressDescriptionView = view.findViewById(R.id.data_egress_description);
-        TextView viewSharedDataView = view.findViewById(R.id.view_shared_data);
+//        TextView viewSharedDataView = view.findViewById(R.id.view_shared_data);
 
         String purposesString = HSUtils.generatePurposesString(annotationInfo.purposes, "\n");
 
@@ -73,7 +73,7 @@ public class DataAccessRecordListAdapter extends ArrayAdapter<AnnotationInfo> im
             }
         } else {
             egressDescriptionText = String.format("This app will not send the %s data or information derived from the %s data out of the phone.", annotationInfo.dataGroup, annotationInfo.dataGroup);
-            viewSharedDataView.setVisibility(View.INVISIBLE);
+//            viewSharedDataView.setVisibility(View.INVISIBLE);
         }
         egressDescriptionView.setText(egressDescriptionText);
 
