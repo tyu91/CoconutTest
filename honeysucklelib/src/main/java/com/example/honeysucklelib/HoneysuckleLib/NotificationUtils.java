@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Html;
 import android.text.Spanned;
@@ -67,9 +68,11 @@ public class NotificationUtils {
         } else {
             title = String.format("%s is accessing %s (since %s)", Utils.getApplicationName(HSStatus.getApplicationContext()), dataGroup, currentTime);
         }
-        Intent intent = new Intent(HSStatus.getApplicationContext(), PrivacyNoticeCenterActivity.class);
+        Intent intent = new Intent(HSStatus.getApplicationContext(), PrivacyCenterActivity.class);
+        intent.putExtra(PrivacyPreferenceFragment.DATA_USE_KEY, "purpose_create_note-UserInput");
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        int currentID = (int) System.currentTimeMillis() & 0xffff;
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, currentID, intent, 0);
         int notificationSmallIcon;
         switch (aggregatedAnnotationInfo.dataGroup) {
             case Microphone:
