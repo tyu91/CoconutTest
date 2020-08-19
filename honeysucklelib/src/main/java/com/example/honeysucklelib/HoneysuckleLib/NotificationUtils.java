@@ -69,7 +69,7 @@ public class NotificationUtils {
             title = String.format("%s is accessing %s (since %s)", Utils.getApplicationName(HSStatus.getApplicationContext()), dataGroup, currentTime);
         }
         Intent intent = new Intent(HSStatus.getApplicationContext(), PrivacyCenterActivity.class);
-        intent.putExtra(PrivacyPreferenceFragment.DATA_USE_KEY, "purpose_create_note-UserInput");
+        intent.putExtra(PrivacyPreferenceFragment.DATA_USE_KEY, ID);
 
         int currentID = (int) System.currentTimeMillis() & 0xffff;
         PendingIntent pendingIntent = PendingIntent.getActivity(context, currentID, intent, 0);
