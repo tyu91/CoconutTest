@@ -5,9 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AnnotationInfoMap {
-    public final Map<String, AnnotationInfo> annotationInfoHashMap = new HashMap<>();
-    public final Map<String, Integer> IDToNotificationIDMap = new HashMap<>();
+    public Map<String, AnnotationInfo> annotationInfoHashMap;
+    public Map<String, Integer> IDToNotificationIDMap;
 
+    public AnnotationInfoMap(){}
+    public AnnotationInfoMap(AnnotationInfoMap annotationInfoMap) {
+        annotationInfoHashMap = annotationInfoMap.annotationInfoHashMap;
+        IDToNotificationIDMap = annotationInfoMap.IDToNotificationIDMap;
+    }
     public AnnotationInfo getAnnotationInfoByID (String ID) {
         return annotationInfoHashMap.get(ID);
     }
@@ -35,5 +40,4 @@ public class AnnotationInfoMap {
         }
         return accessedDataGroupArrayList.toArray(new PersonalDataGroup[0]);
     }
-
 }

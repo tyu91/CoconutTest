@@ -16,7 +16,9 @@ public class InstanceProvider  extends ContentProvider {
         HSStatus.setApplicationContext(getContext());
         try {
             Class c = Class.forName("HoneysuckleGenerated.MyAnnotationInfoMap");
-            HSStatus.setAnnotationInfoMap((AnnotationInfoMap) c.newInstance());
+            AnnotationInfoMap annotationInfoMap =
+                    new AnnotationInfoMap((AnnotationInfoMap) c.newInstance());
+            HSStatus.setAnnotationInfoMap(annotationInfoMap);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
