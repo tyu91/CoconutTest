@@ -15,7 +15,7 @@ import java.util.Map;
 public class AccessHistory {
     static HashMap<String, ArrayList<AccessRecord>> accessRecordMap;
     static AccessHistory accessHistory = null;
-    final long ONE_HOUR_TIME = 60 * 60 * 1000;
+    final long ONE_MINUTE_TIME = 60 * 1000;
 
     AccessHistory() {
         accessRecordMap = new HashMap<>();
@@ -43,11 +43,11 @@ public class AccessHistory {
         if (accessType == AccessType.ONE_TIME || accessType == AccessType.RECURRING) {
             return getAccessTimesInLastWeek(ID);
         } else {
-            return getAccessHoursInLastWeek(ID);
+            return getAccessMinutesInLastWeek(ID);
         }
     }
 
-    private List<Float> getAccessHoursInLastWeek(String ID) {
+    private List<Float> getAccessMinutesInLastWeek(String ID) {
         ArrayList<Float> accessHoursInLastWeek =new ArrayList<>(Arrays.asList(new Float[7]));
         Collections.fill(accessHoursInLastWeek, 0f);
         long week_begin = System.currentTimeMillis() - DataAccessRecordListAdapter.ONE_DAY_TIME * 7;
@@ -59,7 +59,7 @@ public class AccessHistory {
                 if (record.beingTimestamp != -1 && record.endTimestamp != -1) {
                     int index = (int) ((record.beingTimestamp - week_begin) / DataAccessRecordListAdapter.ONE_DAY_TIME);
                     accessHoursInLastWeek.set(index,
-                            accessHoursInLastWeek.get(index) + (record.endTimestamp - record.beingTimestamp)/(ONE_HOUR_TIME * 1f));
+                            accessHoursInLastWeek.get(index) + (record.endTimestamp - record.beingTimestamp)/(ONE_MINUTE_TIME * 1f));
                 }
             }
         }
@@ -83,10 +83,22 @@ public class AccessHistory {
         return accessTimesInLastWeek;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public ArrayList<AccessRecord> getAccessRecordListByID(String ID) {
-        return accessRecordMap.getOrDefault(ID, new ArrayList<AccessRecord>());
+        if (accessRecordMap.containsKey(ID)) {
+            return accessRecordMap.get(ID);
+        } else {
+            return new ArrayList<>();
+        }
     }
+
+    public AccessRecord getMostRecentAccessRecord(String ID) {
+        if (getAccessRecordListByID(ID).isEmpty()) {
+            return null;
+        } else {
+            return getAccessRecordListByID(ID).get(getAccessRecordListByID(ID).size() - 1);
+        }
+    }
+
 
     public class AccessRecord {
         long beingTimestamp = -1;
@@ -105,7 +117,7 @@ public class AccessHistory {
     public void beginAccessRecord(Context context, String ID) {
         // Only maintain at most the access history of the past hour in the memory
         while (!accessRecordMap.getOrDefault(ID, new ArrayList<AccessRecord>()).isEmpty() &&
-                System.currentTimeMillis() - accessRecordMap.get(ID).get(0).beingTimestamp > ONE_HOUR_TIME) {
+                System.currentTimeMillis() - accessRecordMap.get(ID).get(0).beingTimestamp > ONE_MINUTE_TIME) {
             accessRecordMap.get(ID).remove(0);
         }
         if (!accessRecordMap.containsKey(ID)) {
