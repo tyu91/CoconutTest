@@ -33,7 +33,9 @@ public class DataDiagramPreference extends Preference {
     public void onBindViewHolder(PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
         barChart = (BarChart) holder.findViewById(R.id.data_chart);
-        callback.update();
+        if (callback != null) {
+            callback.update();
+        }
     }
 
     interface UpdateBarChartCallback {
