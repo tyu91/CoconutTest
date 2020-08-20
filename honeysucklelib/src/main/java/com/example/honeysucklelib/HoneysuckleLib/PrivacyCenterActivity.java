@@ -37,7 +37,7 @@ public class PrivacyCenterActivity extends AppCompatActivity implements
             title = aggregatedAnnotationInfo.purposes[0];
             Bundle b = new Bundle();
             b.putString(PrivacyPreferenceFragment.TITLE, title);
-            b.putString(PrivacyPreferenceFragment.XML_NAME, key.replace("-","_").toLowerCase());
+            b.putString(PrivacyPreferenceFragment.DATA_USE_KEY, key);
 
             privacyPreferenceFragment.setArguments(b);
         }
@@ -49,7 +49,7 @@ public class PrivacyCenterActivity extends AppCompatActivity implements
     public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref) {
         Bundle b = new Bundle();
         b.putString(PrivacyPreferenceFragment.TITLE, pref.getTitle().toString());
-        b.putString(PrivacyPreferenceFragment.XML_NAME, pref.getKey());
+        b.putString(PrivacyPreferenceFragment.DATA_USE_KEY, pref.getKey());
 
         final Fragment fragment = getSupportFragmentManager().getFragmentFactory().instantiate(
                 getClassLoader(),
