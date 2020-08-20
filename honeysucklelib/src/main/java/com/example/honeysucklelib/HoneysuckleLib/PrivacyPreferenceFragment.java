@@ -1,7 +1,11 @@
 package com.example.honeysucklelib.HoneysuckleLib;
 
+import android.Manifest;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.TextView;
 
@@ -9,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -32,14 +37,16 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.example.honeysucklelib.R;
 
 public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
     public static final long ONE_DAY_TIME = 24 * 60 * 60 * 1000;
     public static final String TITLE = "title";
-    public static final String XML_NAME = "xmlName";
     public static final String DATA_USE_KEY = "dataUseKey";
     BarChart barChart;
 
@@ -51,9 +58,16 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int xmlId = getXmlId(HSStatus.getApplicationContext(),"settings_privacy_center");
-        if (getArguments() != null && getArguments().containsKey(XML_NAME)) {
-            xmlId = getXmlId(HSStatus.getApplicationContext(),
-                    String.format("settings_privacy_center_%s", getArguments().get(XML_NAME)));
+        if (getArguments() != null && getArguments().containsKey(DATA_USE_KEY)) {
+            AnnotationInfo annotationInfo =
+                    HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(getArguments().getString(DATA_USE_KEY));
+            if (annotationInfo != null && annotationInfo.enableAccessTracker) {
+                xmlId = getXmlId(HSStatus.getApplicationContext(),
+                        String.format("settings_privacy_center_%s", getArguments().get(DATA_USE_KEY)));
+            } else {
+                xmlId = getXmlId(HSStatus.getApplicationContext(),
+                        String.format("settings_privacy_center_%s_no_diagram", getArguments().get(DATA_USE_KEY)));
+            }
         }
         addPreferencesFromResource(xmlId);
     }
@@ -83,17 +97,36 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
         if (getArguments() != null && getArguments().containsKey(TITLE)) {
             DataDiagramPreference preference = findPreference(getResources().getString(R.string.data_diagram_key));
             if (preference != null) {
-                preference.setCallback(()->{
+                preference.setCallback(() -> {
                     barChart = preference.barChart;
-                    loadChart(barChart);
+                    loadChart(barChart, getArguments().getString(DATA_USE_KEY));
                 });
             }
             title = getArguments().getString(TITLE);
-        }/* else {
-            barChart.clear();
-            barChart.invalidate();
-            barChart.setVisibility(View.GONE);
-        }*/
+        } else {
+            for (Map.Entry<String, AnnotationInfo> entry :
+                    HSStatus.getMyAnnotationInfoMap().annotationInfoHashMap.entrySet()) {
+                String ID = entry.getKey();
+                AnnotationInfo annotationInfo = entry.getValue();
+                Preference preference = findPreference(ID);
+                if (preference != null) {
+                    /*if (!checkPermissionGranted(annotationInfo.dataGroup)) {
+                        preference.setSummary("Permission not granted for this purpose");
+                    } else */if (annotationInfo.enableAccessTracker) {
+                        AccessHistory.AccessRecord record =
+                                AccessHistory.getInstance().getMostRecentAccessRecord(ID);
+                        if (record == null) {
+                            preference.setSummary("Never accessed");
+                        } else {
+                            String currentTime = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm",
+                                    HSStatus.getApplicationContext().getResources().getConfiguration().locale)
+                                    .format(new java.util.Date(record.beingTimestamp));
+                            preference.setSummary(String.format("Last accessed at %s", currentTime));
+                        }
+                    }
+                }
+            }
+        }
 
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -101,7 +134,37 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
         }
     }
 
-    void loadChart(BarChart barChart) {
+    private boolean checkPermission(String permission) {
+        return ContextCompat.checkSelfPermission(HSStatus.getApplicationContext(), permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean checkPermissionGranted(PersonalDataGroup dataGroup) {
+        switch (dataGroup) {
+            case BodySensor:
+                return checkPermission(Manifest.permission.BODY_SENSORS);
+            case Calendar:
+                return checkPermission(Manifest.permission.READ_CALENDAR);
+            case CallLogs:
+                return checkPermission(Manifest.permission.READ_CALL_LOG);
+            case Camera:
+                return checkPermission(Manifest.permission.CAMERA);
+            case Contacts:
+                return checkPermission(Manifest.permission.READ_CONTACTS);
+            case Location:
+                return checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION) || checkPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+            case Microphone:
+                return checkPermission(Manifest.permission.RECORD_AUDIO);
+            case Sms:
+                return checkPermission(Manifest.permission.READ_SMS);
+            case UserAccount:
+                return checkPermission(Manifest.permission.GET_ACCOUNTS);
+            case UserFile:
+                return checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        return true;
+    }
+
+    void loadChart(BarChart barChart, String ID) {
         if (barChart == null) {
             return;
         }
@@ -127,8 +190,13 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
 //        xAxis.setLabelCount(7);
         xAxis.setValueFormatter(xAxisFormatter);
 
-//        ValueFormatter yAxisLeftFormatter = new UnitValueFormatter(accessType == AccessType.CONTINUOUS ? "minutes" : "times");
-        ValueFormatter yAxisLeftFormatter = new UnitValueFormatter("times");
+        AnnotationInfo annotationInfo = HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(ID);
+        if (annotationInfo == null) {
+            return;
+        }
+        AccessType accessType = annotationInfo.accessType;
+        ValueFormatter yAxisLeftFormatter = new UnitValueFormatter(accessType == AccessType.CONTINUOUS ? "minutes" : "times");
+//        ValueFormatter yAxisLeftFormatter = new UnitValueFormatter("times");
 
 
         YAxis leftAxis = barChart.getAxisLeft();
@@ -168,7 +236,8 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
         int count = 7;
         ArrayList<BarEntry> values = new ArrayList<>();
 
-        List<Integer> accessCounterList = Arrays.asList(10, 8, 0, 0, 0, 0, 0);
+        List<Float> accessCounterList =
+                AccessHistory.getInstance().getAccessCountersInLastWeek(accessType, ID);
 //        List<Float> accessCounterList = AccessHistory.getInstance()
 //                .getAccessCountersInLastWeek(accessType, annotationInfo.ID);
 
