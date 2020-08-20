@@ -8,11 +8,13 @@ public class AnnotationInfo {
     String [] leakedDataTypes;
     AccessType accessType;
     JitNoticeFrequency jitNoticeFrequency;
+    boolean enableAccessTracker;
 
     boolean dataLeaked;
 
     public AnnotationInfo(String ID, PersonalDataGroup dataGroup, String [] purposes, String [] destinations,
-                   String [] leakedDataTypes, boolean dataLeaked, AccessType accessType, JitNoticeFrequency jitNoticeFrequency) {
+                   String [] leakedDataTypes, boolean dataLeaked, AccessType accessType,
+                          JitNoticeFrequency jitNoticeFrequency, boolean enableAccessTracker) {
         this.ID = ID;
         this.dataGroup = dataGroup;
         this.purposes = purposes;
@@ -21,5 +23,6 @@ public class AnnotationInfo {
         this.dataLeaked = dataLeaked;
         this.accessType = accessType;
         this.jitNoticeFrequency = jitNoticeFrequency;
+        this.enableAccessTracker = enableAccessTracker;
     }
 }
