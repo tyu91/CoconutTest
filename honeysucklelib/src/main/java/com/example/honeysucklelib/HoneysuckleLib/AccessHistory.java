@@ -1,10 +1,15 @@
 package com.example.honeysucklelib.HoneysuckleLib;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,11 +19,17 @@ import java.util.List;
 import java.util.Map;
 
 public class AccessHistory {
-    static HashMap<String, ArrayList<AccessRecord>> accessRecordMap;
+    static HashMap<String, ArrayList<AccessRecord>> accessRecordMap = new HashMap<>();
     static AccessHistory accessHistory = null;
+    static final private String accessRecordMapPrefName = "accessRecordMap";
+    static final private String honeysuckleStorageName = "HoneysuckleStorage";
 
     AccessHistory() {
-        accessRecordMap = new HashMap<>();
+        SharedPreferences sharedPref = HSStatus.getApplicationContext().getSharedPreferences(honeysuckleStorageName, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String mapString = sharedPref.getString(accessRecordMapPrefName, gson.toJson(accessRecordMap));
+        Type type = new TypeToken<HashMap<String, ArrayList<AccessRecord>>>(){}.getType();
+        accessRecordMap = gson.fromJson(mapString, type);
     }
 
     public static AccessHistory getInstance() {
@@ -30,13 +41,20 @@ public class AccessHistory {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean isFirstTimeAccess(String ID) {
-        // FIXME: use the data in local storage
-        return getAccessTimesInLastHour(ID) == 1;
+        return accessRecordMap.getOrDefault(ID, new ArrayList<>()).size() == 1;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public int getAccessTimesInLastHour(String ID) {
-        return accessRecordMap.getOrDefault(ID, new ArrayList<AccessRecord>()).size();
+        int accessCount = 0;
+        ArrayList<AccessRecord> accessRecordArrayList = accessRecordMap.getOrDefault(ID, new ArrayList<>());
+        long currentTime = System.currentTimeMillis();
+        for (AccessRecord accessRecord : accessRecordArrayList) {
+            if ((currentTime - accessRecord.beginTimestamp) < HSUtils.ONE_HOUR_TIME) {
+                accessCount += 1;
+            }
+        }
+        return accessCount;
     }
 
     public List<Float> getAccessCountersInLastWeek(AccessType accessType, String ID) {
@@ -139,6 +157,12 @@ public class AccessHistory {
             accessRecordMap.put(ID, new ArrayList<AccessRecord>());
         }
         accessRecordMap.get(ID).add(new AccessRecord(ID, System.currentTimeMillis()));
+        SharedPreferences sharedPref = HSStatus.getApplicationContext().getSharedPreferences(honeysuckleStorageName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        Gson gson = new Gson();
+        Type type = new TypeToken<HashMap<String, ArrayList<AccessRecord>>>(){}.getType();
+        editor.putString(accessRecordMapPrefName, gson.toJson(accessRecordMap, type));
+        editor.apply();
     }
 
     synchronized
@@ -148,5 +172,11 @@ public class AccessHistory {
         }
         accessRecordMap.get(ID).get(accessRecordMap.get(ID).size() - 1)
                 .setEndTimestamp(System.currentTimeMillis());
+        SharedPreferences sharedPref = HSStatus.getApplicationContext().getSharedPreferences(honeysuckleStorageName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        Gson gson = new Gson();
+        Type type = new TypeToken<HashMap<String, ArrayList<AccessRecord>>>(){}.getType();
+        editor.putString(accessRecordMapPrefName, gson.toJson(accessRecordMap, type));
+        editor.apply();
     }
 }

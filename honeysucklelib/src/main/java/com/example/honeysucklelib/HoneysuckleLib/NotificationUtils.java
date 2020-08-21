@@ -19,6 +19,8 @@ import static com.example.honeysucklelib.HoneysuckleLib.AccessType.ONE_TIME;
 import static com.example.honeysucklelib.HoneysuckleLib.AccessType.RECURRING;
 
 public class NotificationUtils {
+    private static int notificationID = 1000;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     static public void pushPrivacyNotification(Context context, String ID) {
         if (context == null) {
@@ -125,7 +127,7 @@ public class NotificationUtils {
 
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(HSStatus.getMyAnnotationInfoMap().getNotificationIDByID(ID), notification);
+        notificationManager.notify(notificationID, notification);
     }
 
     static public void cancelPrivacyNotification(Context context, String ID) {
@@ -134,6 +136,6 @@ public class NotificationUtils {
         }
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.cancel(HSStatus.getMyAnnotationInfoMap().getNotificationIDByID(ID));
+        notificationManager.cancel(notificationID);
     }
 }
