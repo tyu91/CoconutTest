@@ -23,7 +23,7 @@ public class DataGroupNoticeActivity extends Activity {
         Intent intent = getIntent();
         String dataGroupValue = intent.getStringExtra(PrivacyNoticeCenterListAdapter.dataGroupIntentName);
         mDataGroup = PersonalDataGroup.valueOf(dataGroupValue);
-        mDataGroupString = mDataGroup.toString().replace("_", " ");
+        mDataGroupString = HSUtils.getDataString(mDataGroup, false);
         TextView PNCHeaderTitleView = findViewById(R.id.allysiqi_configure_permission_title);
         PNCHeaderTitleView.setText(String.format("%s Access History", mDataGroupString));
         TextView PNCHeaderDescriptionView = findViewById(R.id.allysiqi_configure_permission_description);

@@ -1,11 +1,9 @@
 package com.example.honeysucklelib.HoneysuckleLib;
 
 import android.Manifest;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,8 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceScreen;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
@@ -35,10 +36,7 @@ import com.github.mikephil.charting.utils.MPPointF;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,19 +55,58 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int xmlId = getXmlId(HSStatus.getApplicationContext(),"settings_privacy_center");
-        if (getArguments() != null && getArguments().containsKey(DATA_USE_KEY)) {
-            AnnotationInfo annotationInfo =
-                    HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(getArguments().getString(DATA_USE_KEY));
-            if (annotationInfo != null && annotationInfo.enableAccessTracker) {
-                xmlId = getXmlId(HSStatus.getApplicationContext(),
-                        String.format("settings_privacy_center_%s", getArguments().get(DATA_USE_KEY)));
+        if (getArguments() != null && getArguments().containsKey(DATA_USE_KEY) &&
+                "view_data_activities".equals(getArguments().getString(DATA_USE_KEY))) {
+            Context activityContext = getActivity();
+
+            PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(activityContext);
+            setPreferenceScreen(preferenceScreen);
+
+            PreferenceCategory recentPreferenceCategory = new PreferenceCategory(activityContext);
+            recentPreferenceCategory.setTitle("Recent data activities");
+            recentPreferenceCategory.setIconSpaceReserved(false);
+            getPreferenceScreen().addPreference(recentPreferenceCategory);
+
+            ArrayList<AccessHistory.AccessRecord> latestAccessRecordList =
+                    AccessHistory.getInstance().getLatestAccessRecordList();
+
+            if (latestAccessRecordList.isEmpty()) {
+                Preference preference = new Preference(activityContext);
+                preference.setTitle("No data activities recorded");
+                preference.setIconSpaceReserved(false);
+                recentPreferenceCategory.addPreference(preference);
             } else {
-                xmlId = getXmlId(HSStatus.getApplicationContext(),
-                        String.format("settings_privacy_center_%s_no_diagram", getArguments().get(DATA_USE_KEY)));
+                for (AccessHistory.AccessRecord accessRecord : latestAccessRecordList) {
+                    AnnotationInfo annotationInfo =
+                            HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(accessRecord.ID);
+                    if (annotationInfo == null) {
+                        continue;
+                    }
+                    Preference preference = new Preference(activityContext);
+                    preference.setTitle(String.format("Accessed %s",
+                            HSUtils.getDataString(annotationInfo.dataGroup, true)));
+                    preference.setSummary(String.format("%s\nData collected %s",
+                            annotationInfo.purposes[0],
+                            HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
+                    preference.setIcon(HSUtils.getDataGroupIconId(annotationInfo.dataGroup));
+                    recentPreferenceCategory.addPreference(preference);
+                }
             }
+        } else {
+            int xmlId = getXmlId(HSStatus.getApplicationContext(), "settings_privacy_center");
+            if (getArguments() != null && getArguments().containsKey(DATA_USE_KEY)) {
+                AnnotationInfo annotationInfo =
+                        HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(getArguments().getString(DATA_USE_KEY));
+                if (annotationInfo != null && annotationInfo.enableAccessTracker) {
+                    xmlId = getXmlId(HSStatus.getApplicationContext(),
+                            String.format("settings_privacy_center_%s", getArguments().get(DATA_USE_KEY)));
+                } else {
+                    xmlId = getXmlId(HSStatus.getApplicationContext(),
+                            String.format("settings_privacy_center_%s_no_diagram", getArguments().get(DATA_USE_KEY)));
+                }
+            }
+            addPreferencesFromResource(xmlId);
         }
-        addPreferencesFromResource(xmlId);
     }
 
     @Override
@@ -120,7 +157,7 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
                         } else {
                             String currentTime = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm",
                                     HSStatus.getApplicationContext().getResources().getConfiguration().locale)
-                                    .format(new java.util.Date(record.beingTimestamp));
+                                    .format(new java.util.Date(record.beginTimestamp));
                             preference.setSummary(String.format("Last accessed at %s", currentTime));
                         }
                     }

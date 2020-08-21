@@ -123,7 +123,9 @@ public class PermissionNotice {
         }
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context)
-                .setTitle(Html.fromHtml(String.format("Privacy facts about <b>%s</b> access in %s", personalDataGroup.toString(), Utils.getApplicationName(HSStatus.getApplicationContext()))))
+                .setTitle(Html.fromHtml(String.format("Privacy facts about <b>%s</b> access in %s",
+                        HSUtils.getDataString(personalDataGroup, false),
+                        HSUtils.getApplicationName(HSStatus.getApplicationContext()))))
                 .setMessage(egressDescriptionText)
                 .setNeutralButton("Got it", new DialogInterface.OnClickListener() {
                     @Override

@@ -5,10 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
-import android.provider.Settings;
 import android.text.Html;
 import android.text.Spanned;
 
@@ -37,7 +34,7 @@ public class NotificationUtils {
             return;
         }
 
-        String dataGroup = aggregatedAnnotationInfo.dataGroup.toString().replace("_", " ");
+        String dataGroup = HSUtils.getDataString(aggregatedAnnotationInfo.dataGroup, false);
         String purposesString = HSUtils.generatePurposesString(aggregatedAnnotationInfo.purposes, "<br>");
         String destinationsString = HSUtils.generateEgressInfoString(aggregatedAnnotationInfo.destinations);
         String dataTypesString = HSUtils.generateEgressInfoString(aggregatedAnnotationInfo.leakedDataTypes);
@@ -64,9 +61,9 @@ public class NotificationUtils {
                 context.getResources().getConfiguration().locale)
                 .format(new java.util.Date (System.currentTimeMillis()));
         if (accessType == ONE_TIME || accessType == RECURRING) {
-            title = String.format("%s accessed %s at %s (%d times in the last hour)", Utils.getApplicationName(HSStatus.getApplicationContext()), dataGroup, currentTime, AccessHistory.getInstance().getAccessTimesInLastHour(ID));
+            title = String.format("%s accessed %s at %s (%d times in the last hour)", HSUtils.getApplicationName(HSStatus.getApplicationContext()), dataGroup, currentTime, AccessHistory.getInstance().getAccessTimesInLastHour(ID));
         } else {
-            title = String.format("%s is accessing %s (since %s)", Utils.getApplicationName(HSStatus.getApplicationContext()), dataGroup, currentTime);
+            title = String.format("%s is accessing %s (since %s)", HSUtils.getApplicationName(HSStatus.getApplicationContext()), dataGroup, currentTime);
         }
         Intent intent = new Intent(HSStatus.getApplicationContext(), PrivacyCenterActivity.class);
         intent.putExtra(PrivacyPreferenceFragment.DATA_USE_KEY, ID);

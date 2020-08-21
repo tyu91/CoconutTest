@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="notification_frequency">
+        <item>Always pop up</item>
+        <item>Pop up on first collection</item>
+        <item>Show data icon on stats bar</item>
+        <item>No alert</item>
+    </string-array>
+</resources>
