@@ -58,42 +58,22 @@ public class AccessHistory {
     }
 
     public List<Float> getAccessCountersInLastWeek(AccessType accessType, String ID) {
-        if (accessType == AccessType.ONE_TIME || accessType == AccessType.RECURRING) {
-            return getAccessTimesInLastWeek(ID);
-        } else {
-            return getAccessMinutesInLastWeek(ID);
-        }
-    }
-
-    private List<Float> getAccessMinutesInLastWeek(String ID) {
-        ArrayList<Float> accessHoursInLastWeek =new ArrayList<>(Arrays.asList(new Float[7]));
-        Collections.fill(accessHoursInLastWeek, 0f);
-        long week_begin = System.currentTimeMillis() - DataAccessRecordListAdapter.ONE_DAY_TIME * 7;
-        for (Map.Entry<String, ArrayList<AccessRecord>> entry : accessRecordMap.entrySet()) {
-            if (entry.getKey() != ID) {
-                continue;
-            }
-            for (AccessRecord record : entry.getValue()) {
-                if (record.beginTimestamp != -1 && record.endTimestamp != -1) {
-                    int index = (int) ((record.beginTimestamp - week_begin) / DataAccessRecordListAdapter.ONE_DAY_TIME);
-                    accessHoursInLastWeek.set(index,
-                            accessHoursInLastWeek.get(index) + (record.endTimestamp - record.beginTimestamp)/(HSUtils.ONE_MINUTE_TIME * 1f));
-                }
-            }
-        }
-        return accessHoursInLastWeek;
+        return getAccessTimesInLastWeek(ID);
     }
 
     private List<Float> getAccessTimesInLastWeek(String ID) {
         ArrayList<Float> accessTimesInLastWeek = new ArrayList<>(Arrays.asList(new Float[7]));
         Collections.fill(accessTimesInLastWeek, 0f);
         long week_begin = System.currentTimeMillis() - DataAccessRecordListAdapter.ONE_DAY_TIME * 7;
-        for (Map.Entry<String, ArrayList<AccessRecord>> entry : accessRecordMap.entrySet()) {
-            if (entry.getKey() != ID) {
-                continue;
-            }
-            for (AccessRecord record : entry.getValue()) {
-                int index = (int) ((record.beginTimestamp - week_begin) / DataAccessRecordListAdapter.ONE_DAY_TIME);
+        ArrayList<AccessRecord> accessRecordArrayList;
+        if (accessRecordMap.containsKey(ID)) {
+            accessRecordArrayList = accessRecordMap.get(ID);
+        } else {
+            accessRecordArrayList = new ArrayList<>();
+        }
+        for (AccessRecord record : accessRecordArrayList) {
+            int index = (int) ((record.beginTimestamp - week_begin) / DataAccessRecordListAdapter.ONE_DAY_TIME);
+            if (index < 7) {
                 accessTimesInLastWeek.set(index,
                         accessTimesInLastWeek.get(index) + 1);
             }
