@@ -87,42 +87,7 @@ public class NotificationUtils {
 
         int currentID = (int) System.currentTimeMillis() & 0xffff;
         PendingIntent pendingIntent = PendingIntent.getActivity(context, currentID, intent, 0);
-        int notificationSmallIcon;
-        switch (aggregatedAnnotationInfo.dataGroup) {
-            case Microphone:
-                notificationSmallIcon = R.drawable.baseline_mic_black_18dp;
-                break;
-            case Camera:
-                notificationSmallIcon = R.drawable.baseline_camera_alt_black_18dp;
-                break;
-            case Location:
-                notificationSmallIcon = R.drawable.baseline_location_on_black_18dp;
-                break;
-            case Sms:
-                notificationSmallIcon = R.drawable.baseline_textsms_black_18dp;
-                break;
-            case BodySensor:
-                notificationSmallIcon = R.drawable.baseline_location_on_black_18dp;
-                break;
-            case UserFile:
-                notificationSmallIcon = R.drawable.baseline_folder_black_18dp;
-                break;
-            case UserInput:
-                notificationSmallIcon = R.drawable.baseline_create_black_18dp;
-                break;
-            case CallLogs:
-                notificationSmallIcon = R.drawable.baseline_phone_black_18dp;
-                break;
-            case Calendar:
-                notificationSmallIcon = R.drawable.baseline_today_black_18dp;
-                break;
-            case Contacts:
-                notificationSmallIcon = R.drawable.baseline_contacts_black_18dp;
-                break;
-            case UniqueId:
-            default:
-                notificationSmallIcon = R.drawable.baseline_perm_identity_black_18dp;
-        }
+        int notificationSmallIcon = R.drawable.baseline_privacy_tip_black_18dp;
         Notification.Builder builder = new Notification.Builder(context)
                 .setContentTitle(title)
                 .setContentText(styledText)
