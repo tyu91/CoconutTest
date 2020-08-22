@@ -2,6 +2,7 @@ package com.example.honeysucklelib.HoneysuckleLib;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -12,9 +13,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -42,11 +45,14 @@ import java.util.Map;
 
 import com.example.honeysucklelib.R;
 
-public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
+import static com.example.honeysucklelib.HoneysuckleLib.HSUtils.notificationConfigKeyPattern;
+
+public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final long ONE_DAY_TIME = 24 * 60 * 60 * 1000;
     public static final String TITLE = "title";
     public static final String DATA_USE_KEY = "dataUseKey";
     BarChart barChart;
+    SharedPreferences sharedPrefs;
 
     public static int getXmlId (Context context, String resourceName) {
         return context.getResources().getIdentifier(resourceName, "xml", context.getPackageName());
@@ -55,6 +61,8 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(HSStatus.getApplicationContext());
+        sharedPrefs.registerOnSharedPreferenceChangeListener(this);
         if (getArguments() != null && getArguments().containsKey(DATA_USE_KEY) &&
                 "view_data_activities".equals(getArguments().getString(DATA_USE_KEY))) {
             Context activityContext = getActivity();
@@ -89,6 +97,7 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
                             annotationInfo.purposes[0],
                             HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
                     preference.setIcon(HSUtils.getDataGroupIconId(annotationInfo.dataGroup));
+                    preference.setSelectable(false);
                     recentPreferenceCategory.addPreference(preference);
                 }
             }
@@ -132,12 +141,42 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
         String title = getString(R.string.privacy_center_name);
 
         if (getArguments() != null && getArguments().containsKey(TITLE)) {
-            DataDiagramPreference preference = findPreference(getResources().getString(R.string.data_diagram_key));
-            if (preference != null) {
-                preference.setCallback(() -> {
-                    barChart = preference.barChart;
-                    loadChart(barChart, getArguments().getString(DATA_USE_KEY));
+            String ID = getArguments().getString(DATA_USE_KEY);
+            DataDiagramPreference diagramPreference = findPreference(getResources().getString(R.string.data_diagram_key));
+            if (diagramPreference != null) {
+                diagramPreference.setCallback(() -> {
+                    barChart = diagramPreference.barChart;
+                    loadChart(barChart, ID);
                 });
+            }
+            String noticeConfigPreferenceKey =
+                    String.format(notificationConfigKeyPattern, getArguments().get(DATA_USE_KEY));
+            ListPreference noticeConfigPreference = findPreference(noticeConfigPreferenceKey);
+            if (noticeConfigPreference != null) {
+                AnnotationInfo annotationInfo = HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(ID);
+                String defaultJitNoticeFrequencyString = "Not configured";
+                if (annotationInfo != null) {
+                    JitNoticeFrequency jitNoticeFrequency = annotationInfo.jitNoticeFrequency;
+                    switch (jitNoticeFrequency) {
+                        case NOTIFICATION_ALWAYS_POP_OUT:
+                            defaultJitNoticeFrequencyString = "Always pop up";
+                            break;
+                        case NOTIFICATION_POP_OUT_FIRST_TIME_ONLY:
+                            defaultJitNoticeFrequencyString = "Pop up on first collection";
+                            break;
+                        case SEND_NOTIFICATION_SILENTLY:
+                            defaultJitNoticeFrequencyString = "Show data icon on stats bar";
+                            break;
+                        case DO_NOT_SEND_NOTIFICATION:
+                            defaultJitNoticeFrequencyString = "No alert";
+                            break;
+                        case UNKNOWN:
+                        default:
+                            defaultJitNoticeFrequencyString = "Not configured";
+                            break;
+                    }
+                }
+                noticeConfigPreference.setSummary(sharedPrefs.getString(noticeConfigPreferenceKey, defaultJitNoticeFrequencyString));
             }
             title = getArguments().getString(TITLE);
         } else {
@@ -232,7 +271,7 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
             return;
         }
         AccessType accessType = annotationInfo.accessType;
-        ValueFormatter yAxisLeftFormatter = new UnitValueFormatter(accessType == AccessType.CONTINUOUS ? "minutes" : "times");
+        ValueFormatter yAxisLeftFormatter = new UnitValueFormatter(" times");
 //        ValueFormatter yAxisLeftFormatter = new UnitValueFormatter("times");
 
 
@@ -303,6 +342,19 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat {
 
         barChart.setData(data);
 
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Preference pref = findPreference(key);
+
+        if (pref instanceof ListPreference) {
+            ListPreference listPref = (ListPreference) pref;
+            pref.setSummary(listPref.getEntry());
+        } else if (pref instanceof EditTextPreference) {
+            EditTextPreference editTextPreference = (EditTextPreference) pref;
+            pref.setSummary(editTextPreference.getText());
+        }
     }
 
     public class DayAxisValueFormatter extends ValueFormatter

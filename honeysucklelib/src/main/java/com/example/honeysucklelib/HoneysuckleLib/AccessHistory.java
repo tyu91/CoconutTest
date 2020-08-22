@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
+import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -22,10 +23,10 @@ public class AccessHistory {
     static HashMap<String, ArrayList<AccessRecord>> accessRecordMap = new HashMap<>();
     static AccessHistory accessHistory = null;
     static final private String accessRecordMapPrefName = "accessRecordMap";
-    static final private String honeysuckleStorageName = "HoneysuckleStorage";
+    SharedPreferences sharedPref;
 
     AccessHistory() {
-        SharedPreferences sharedPref = HSStatus.getApplicationContext().getSharedPreferences(honeysuckleStorageName, Context.MODE_PRIVATE);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(HSStatus.getApplicationContext());
         Gson gson = new Gson();
         String mapString = sharedPref.getString(accessRecordMapPrefName, gson.toJson(accessRecordMap));
         Type type = new TypeToken<HashMap<String, ArrayList<AccessRecord>>>(){}.getType();
@@ -137,7 +138,6 @@ public class AccessHistory {
             accessRecordMap.put(ID, new ArrayList<AccessRecord>());
         }
         accessRecordMap.get(ID).add(new AccessRecord(ID, System.currentTimeMillis()));
-        SharedPreferences sharedPref = HSStatus.getApplicationContext().getSharedPreferences(honeysuckleStorageName, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         Gson gson = new Gson();
         Type type = new TypeToken<HashMap<String, ArrayList<AccessRecord>>>(){}.getType();
@@ -152,7 +152,6 @@ public class AccessHistory {
         }
         accessRecordMap.get(ID).get(accessRecordMap.get(ID).size() - 1)
                 .setEndTimestamp(System.currentTimeMillis());
-        SharedPreferences sharedPref = HSStatus.getApplicationContext().getSharedPreferences(honeysuckleStorageName, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         Gson gson = new Gson();
         Type type = new TypeToken<HashMap<String, ArrayList<AccessRecord>>>(){}.getType();

@@ -5,11 +5,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
 
 import androidx.annotation.RequiresApi;
+import androidx.preference.PreferenceManager;
 
 import com.example.honeysucklelib.R;
 
@@ -17,6 +19,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 import static android.text.Html.FROM_HTML_MODE_LEGACY;
 import static com.example.honeysucklelib.HoneysuckleLib.AccessType.ONE_TIME;
 import static com.example.honeysucklelib.HoneysuckleLib.AccessType.RECURRING;
+import static com.example.honeysucklelib.HoneysuckleLib.HSUtils.notificationConfigKeyPattern;
 
 public class NotificationUtils {
     private static int notificationID = 1000;
@@ -32,6 +35,18 @@ public class NotificationUtils {
             return;
         }
         JitNoticeFrequency jitNoticeFrequency = aggregatedAnnotationInfo.jitNoticeFrequency;
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(HSStatus.getApplicationContext());
+        String userSetJitNoticeFrequencyString =
+                sharedPref.getString(String.format(notificationConfigKeyPattern, ID), "Not configured");
+        if ("Always pop up".equals(userSetJitNoticeFrequencyString)) {
+            jitNoticeFrequency = JitNoticeFrequency.NOTIFICATION_ALWAYS_POP_OUT;
+        } else if ("Pop up on first collection".equals(userSetJitNoticeFrequencyString)) {
+            jitNoticeFrequency = JitNoticeFrequency.NOTIFICATION_POP_OUT_FIRST_TIME_ONLY;
+        } else if ("Show data icon on stats bar".equals(userSetJitNoticeFrequencyString)) {
+            jitNoticeFrequency = JitNoticeFrequency.SEND_NOTIFICATION_SILENTLY;
+        } else if ("No alert".equals(userSetJitNoticeFrequencyString)) {
+            jitNoticeFrequency = JitNoticeFrequency.DO_NOT_SEND_NOTIFICATION;
+        }
         if (jitNoticeFrequency == JitNoticeFrequency.DO_NOT_SEND_NOTIFICATION) {
             return;
         }

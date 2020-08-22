@@ -13,6 +13,8 @@ public class HSUtils {
     static final long ONE_HOUR_TIME = 60 * 60 * 1000;
     static final long ONE_MINUTE_TIME = 60 * 1000;
 
+    static final String notificationConfigKeyPattern = "%s_data_collection_alert_settings";
+
     static String generatePurposesString(@NonNull String [] purposes, String separator) {
         if (purposes == null || purposes.length == 0) {
             return "Not specified by the developer";
