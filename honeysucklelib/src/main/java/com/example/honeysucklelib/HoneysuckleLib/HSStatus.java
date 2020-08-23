@@ -5,6 +5,7 @@ import android.content.Context;
 public class HSStatus {
     static private Context myApplicationContext = null;
     static private AnnotationInfoMap myAnnotationInfoMap = null;
+    static public boolean isAppForegrounded = false;
 
     public static void setApplicationContext(Context applicationContext) {
         myApplicationContext = applicationContext;
