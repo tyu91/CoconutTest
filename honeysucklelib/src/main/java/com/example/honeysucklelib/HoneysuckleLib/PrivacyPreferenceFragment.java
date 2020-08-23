@@ -106,15 +106,23 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
             if (getArguments() != null && getArguments().containsKey(DATA_USE_KEY)) {
                 AnnotationInfo annotationInfo =
                         HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(getArguments().getString(DATA_USE_KEY));
+                xmlId = getXmlId(HSStatus.getApplicationContext(),
+                        String.format("settings_privacy_center_%s", getArguments().get(DATA_USE_KEY)));
                 if (annotationInfo != null && annotationInfo.enableAccessTracker) {
-                    xmlId = getXmlId(HSStatus.getApplicationContext(),
-                            String.format("settings_privacy_center_%s", getArguments().get(DATA_USE_KEY)));
+                    addPreferencesFromResource(xmlId);
                 } else {
-                    xmlId = getXmlId(HSStatus.getApplicationContext(),
-                            String.format("settings_privacy_center_%s_no_diagram", getArguments().get(DATA_USE_KEY)));
+//                    xmlId = getXmlId(HSStatus.getApplicationContext(),
+//                            String.format("settings_privacy_center_%s_no_diagram", getArguments().get(DATA_USE_KEY)));
+                    addPreferencesFromResource(xmlId);
+                    Preference preference = findPreference(HSStatus.getApplicationContext().getResources().getString(R.string.data_diagram_key));
+                    if (preference != null) {
+                        getPreferenceScreen().removePreference(
+                                preference);
+                    }
                 }
+            } else {
+                addPreferencesFromResource(xmlId);
             }
-            addPreferencesFromResource(xmlId);
         }
     }
 
