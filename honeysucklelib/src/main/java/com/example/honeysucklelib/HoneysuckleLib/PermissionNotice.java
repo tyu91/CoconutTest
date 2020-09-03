@@ -94,28 +94,35 @@ public class PermissionNotice {
         ArrayList<String> purposeList = new ArrayList<>();
         ArrayList<String> destinationList = new ArrayList<>();
         ArrayList<String> dataTypeList = new ArrayList<>();
+        ArrayList<SinkPrivacyInfo> sinkPrivacyInfoArrayList = new ArrayList<>();
+
         boolean dataLeaked = false;
         for (SourcePrivacyInfo privacyInfo : privacyInfoList) {
             if (privacyInfo.purposes != null) {
                 purposeList.addAll(Arrays.asList(privacyInfo.purposes));
             }
+            sinkPrivacyInfoArrayList.addAll(HSStatus.getMyPrivacyInfoMap().getSinkIDsBySourceID(privacyInfo.ID));
         }
         String purposesString = HSUtils.generatePurposesString(
-                purposeList.toArray(new String[0]), "<br>"); // "\n"
-        String destinationsString = HSUtils.generateEgressInfoString(destinationList.toArray(new String[0]));
-        String dataTypesString = HSUtils.generateEgressInfoString(dataTypeList.toArray(new String[0]));
+                purposeList.toArray(new String[0]), "<br>"); // "\n" // TODO: also append sink purposes
 
         Spanned egressDescriptionText;
-        if (dataLeaked) {
-            if (destinationsString == null && dataTypesString == null) {
-                egressDescriptionText = Html.fromHtml(String.format("<p>This app may send the %s data or information derived from the %s data out of the phone.</p><b>%s may be used for:</b><br>%s", personalDataGroup, personalDataGroup, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
-            } else if (destinationsString == null && dataTypesString != null) {
-                egressDescriptionText = Html.fromHtml(String.format("<p>This app will send %s out of the phone</p><b>%s may be used for:</b><br>%s", dataTypesString, destinationsString, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
-            } else if (destinationsString != null && dataTypesString == null) {
-                egressDescriptionText = Html.fromHtml(String.format("<p>This app will send the %s data or information derived from the %s data to %s</p><b>%s may be used for:</b><br>%s", personalDataGroup, personalDataGroup, destinationsString, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
-            } else {
-                egressDescriptionText = Html.fromHtml(String.format("<p>This app will send %s to %s</p><b>%s may be used for:</b><br>%s", dataTypesString, destinationsString, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
+        if (!sinkPrivacyInfoArrayList.isEmpty()) {
+            StringBuilder accessTypeStringBuilder = new StringBuilder();
+            for (SinkPrivacyInfo sinkPrivacyInfo : sinkPrivacyInfoArrayList) {
+                String accessTypeString;
+                if (sinkPrivacyInfo.accessType == AccessType.STORED_ON_DEVICE) {
+                    accessTypeString = String.format("<p>This app may store %s on device.</p>", sinkPrivacyInfo.dataGroup);
+                } else if (sinkPrivacyInfo.accessType == AccessType.STORED_ON_CLOUD) {
+                    accessTypeString = String.format("<p>This app may store %s on cloud.</p>", sinkPrivacyInfo.dataGroup);
+                } else if (sinkPrivacyInfo.accessType == AccessType.SENT_OFF_DEVICE) {
+                    accessTypeString = String.format("<p>This app may send %s off device.</p>", sinkPrivacyInfo.dataGroup);
+                } else {
+                    continue;
+                }
+                accessTypeStringBuilder.append(accessTypeString);
             }
+            egressDescriptionText = Html.fromHtml(String.format("%s<b>%s may be used for:</b><br>%s", accessTypeStringBuilder, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
         } else {
             egressDescriptionText = Html.fromHtml(String.format("<p>This app will not send the %s data or information derived from the %s data out of the phone.</p><b>%s may be used for:</b><br>%s", personalDataGroup, personalDataGroup, personalDataGroup, purposesString), FROM_HTML_MODE_LEGACY);
         }

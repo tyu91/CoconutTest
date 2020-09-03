@@ -1,6 +1,7 @@
 package com.example.honeysucklelib.HoneysuckleLib;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 public class PrivacyInfoMap {
@@ -14,6 +15,20 @@ public class PrivacyInfoMap {
     }
     public PrivacyInfo getPrivacyInfoByID(String ID) {
         return privacyInfoMap.get(ID);
+    }
+
+    public ArrayList<SinkPrivacyInfo> getSinkIDsBySourceID(String ID) {
+        ArrayList<SinkPrivacyInfo> sinkIDs = new ArrayList<>();
+        for (Map.Entry<String, PrivacyInfo> entry : privacyInfoMap.entrySet()) {
+            PrivacyInfo privacyInfo = entry.getValue();
+            if (privacyInfo instanceof SinkPrivacyInfo) {
+                SinkPrivacyInfo sinkPrivacyInfo = (SinkPrivacyInfo) privacyInfo;
+                if (Arrays.asList(sinkPrivacyInfo.sourceIdsOfSink).contains(ID)) {
+                    sinkIDs.add(sinkPrivacyInfo);
+                }
+            }
+        }
+        return sinkIDs;
     }
 
     public SourcePrivacyInfo[] getSourcePrivacyInfoListByDataGroup(PersonalDataGroup dataGroup) {
