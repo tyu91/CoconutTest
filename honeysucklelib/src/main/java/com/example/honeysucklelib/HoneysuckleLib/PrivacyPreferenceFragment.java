@@ -85,30 +85,53 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
                 recentPreferenceCategory.addPreference(preference);
             } else {
                 for (AccessHistory.AccessRecord accessRecord : latestAccessRecordList) {
-                    AnnotationInfo annotationInfo =
-                            HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(accessRecord.ID);
-                    if (annotationInfo == null) {
+                    PrivacyInfo privacyInfo =
+                            HSStatus.getMyPrivacyInfoMap().getPrivacyInfoByID(accessRecord.ID);
+                    if (privacyInfo == null) {
                         continue;
                     }
                     Preference preference = new Preference(activityContext);
-                    preference.setTitle(String.format("Accessed %s",
-                            HSUtils.getDataString(annotationInfo.dataGroup, true)));
-                    preference.setSummary(String.format("%s\nData collected %s",
-                            annotationInfo.purposes[0],
-                            HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
-                    preference.setIcon(HSUtils.getDataGroupIconId(annotationInfo.dataGroup));
-                    preference.setSelectable(false);
-                    recentPreferenceCategory.addPreference(preference);
+                    if (privacyInfo instanceof SourcePrivacyInfo) {
+                        SourcePrivacyInfo sourcePrivacyInfo = (SourcePrivacyInfo) privacyInfo;
+                        preference.setTitle(String.format("Accessed %s",
+                                HSUtils.getDataString(sourcePrivacyInfo.dataGroup, true)));
+                        preference.setSummary(String.format("%s\nData collected %s",
+                                sourcePrivacyInfo.purposes[0],
+                                HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
+                        preference.setIcon(HSUtils.getDataGroupIconId(sourcePrivacyInfo.dataGroup));
+                        preference.setSelectable(false);
+                        recentPreferenceCategory.addPreference(preference);
+                    } else if (privacyInfo instanceof SinkPrivacyInfo) {
+                        SinkPrivacyInfo sinkPrivacyInfo = (SinkPrivacyInfo) privacyInfo;
+                        if (sinkPrivacyInfo.accessType == AccessType.STORED_ON_DEVICE) {
+                            preference.setTitle(String.format("Stored %s on device", sinkPrivacyInfo.dataGroup.toLowerCase()));
+                            preference.setSummary(String.format("%s\nData stored %s",
+                                    sinkPrivacyInfo.purposes[0],
+                                    HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
+                        } else if (sinkPrivacyInfo.accessType == AccessType.STORED_ON_CLOUD) {
+                            preference.setTitle(String.format("Stored %s on cloud", sinkPrivacyInfo.dataGroup.toLowerCase()));
+                            preference.setSummary(String.format("%s\nData stored %s",
+                                    sinkPrivacyInfo.purposes[0],
+                                    HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
+                        } else if (sinkPrivacyInfo.accessType == AccessType.SENT_OFF_DEVICE) {
+                            preference.setTitle(String.format("Sent %s off device", sinkPrivacyInfo.dataGroup.toLowerCase()));
+                            preference.setSummary(String.format("%s\nData sent out %s",
+                                    sinkPrivacyInfo.purposes[0],
+                                    HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
+                        }
+                        preference.setSelectable(false);
+                        recentPreferenceCategory.addPreference(preference);
+                    }
                 }
             }
         } else {
             int xmlId = getXmlId(HSStatus.getApplicationContext(), "settings_privacy_center");
             if (getArguments() != null && getArguments().containsKey(DATA_USE_KEY)) {
-                AnnotationInfo annotationInfo =
-                        HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(getArguments().getString(DATA_USE_KEY));
+                SourcePrivacyInfo privacyInfo =
+                        (SourcePrivacyInfo) HSStatus.getMyPrivacyInfoMap().getPrivacyInfoByID(getArguments().getString(DATA_USE_KEY));
                 xmlId = getXmlId(HSStatus.getApplicationContext(),
                         String.format("settings_privacy_center_%s", getArguments().get(DATA_USE_KEY)));
-                if (annotationInfo != null && annotationInfo.enableAccessTracker) {
+                if (privacyInfo != null && privacyInfo.enableAccessTracker) {
                     addPreferencesFromResource(xmlId);
                 } else {
 //                    xmlId = getXmlId(HSStatus.getApplicationContext(),
@@ -150,6 +173,8 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
 
         if (getArguments() != null && getArguments().containsKey(TITLE)) {
             String ID = getArguments().getString(DATA_USE_KEY);
+            SourcePrivacyInfo privacyInfo =
+                    (SourcePrivacyInfo) HSStatus.getMyPrivacyInfoMap().getPrivacyInfoByID(ID);
             DataDiagramPreference diagramPreference = findPreference(getResources().getString(R.string.data_diagram_key));
             if (diagramPreference != null) {
                 diagramPreference.setCallback(() -> {
@@ -161,10 +186,9 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
                     String.format(notificationConfigKeyPattern, getArguments().get(DATA_USE_KEY));
             ListPreference noticeConfigPreference = findPreference(noticeConfigPreferenceKey);
             if (noticeConfigPreference != null) {
-                AnnotationInfo annotationInfo = HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(ID);
                 String defaultJitNoticeFrequencyString = "Not configured";
-                if (annotationInfo != null) {
-                    JitNoticeFrequency jitNoticeFrequency = annotationInfo.jitNoticeFrequency;
+                if (privacyInfo != null) {
+                    JitNoticeFrequency jitNoticeFrequency = privacyInfo.jitNoticeFrequency;
                     switch (jitNoticeFrequency) {
                         case NOTIFICATION_ALWAYS_POP_OUT:
                             defaultJitNoticeFrequencyString = "Always pop up";
@@ -186,26 +210,30 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
                 }
                 noticeConfigPreference.setSummary(sharedPrefs.getString(noticeConfigPreferenceKey, defaultJitNoticeFrequencyString));
             }
-            title = getArguments().getString(TITLE);
+            if (privacyInfo != null) {
+                title = String.format("%s (%s)", HSUtils.getDataString(privacyInfo.dataGroup, false), getArguments().getString(TITLE).toLowerCase());
+            } else {
+                title = getArguments().getString(TITLE);
+            }
         } else {
-            for (Map.Entry<String, AnnotationInfo> entry :
-                    HSStatus.getMyAnnotationInfoMap().annotationInfoHashMap.entrySet()) {
+            for (Map.Entry<String, PrivacyInfo> entry :
+                    HSStatus.getMyPrivacyInfoMap().privacyInfoMap.entrySet()) {
                 String ID = entry.getKey();
-                AnnotationInfo annotationInfo = entry.getValue();
-                Preference preference = findPreference(ID);
-                if (preference != null) {
-                    /*if (!checkPermissionGranted(annotationInfo.dataGroup)) {
-                        preference.setSummary("Permission not granted for this purpose");
-                    } else */if (annotationInfo.enableAccessTracker) {
-                        AccessHistory.AccessRecord record =
-                                AccessHistory.getInstance().getMostRecentAccessRecord(ID);
-                        if (record == null) {
-                            preference.setSummary("Never accessed");
-                        } else {
-                            String currentTime = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm",
-                                    HSStatus.getApplicationContext().getResources().getConfiguration().locale)
-                                    .format(new java.util.Date(record.beginTimestamp));
-                            preference.setSummary(String.format("Last accessed at %s", currentTime));
+                if (entry.getValue() instanceof SourcePrivacyInfo) {
+                    SourcePrivacyInfo sourcePrivacyInfo = (SourcePrivacyInfo) entry.getValue();
+                    Preference preference = findPreference(ID);
+                    if (preference != null) {
+                        if (sourcePrivacyInfo.enableAccessTracker) {
+                            AccessHistory.AccessRecord record =
+                                    AccessHistory.getInstance().getMostRecentAccessRecord(ID);
+                            if (record == null) {
+                                preference.setSummary("Never accessed");
+                            } else {
+                                String currentTime = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm",
+                                        HSStatus.getApplicationContext().getResources().getConfiguration().locale)
+                                        .format(new java.util.Date(record.beginTimestamp));
+                                preference.setSummary(String.format("Last accessed at %s", currentTime));
+                            }
                         }
                     }
                 }
@@ -274,12 +302,19 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
 //        xAxis.setLabelCount(7);
         xAxis.setValueFormatter(xAxisFormatter);
 
-        AnnotationInfo annotationInfo = HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(ID);
-        if (annotationInfo == null) {
+        PrivacyInfo privacyInfo = HSStatus.getMyPrivacyInfoMap().getPrivacyInfoByID(ID);
+        if (privacyInfo == null) {
             return;
         }
-        AccessType accessType = annotationInfo.accessType;
-        ValueFormatter yAxisLeftFormatter = new UnitValueFormatter(" times");
+        AccessType accessType;
+        if (privacyInfo instanceof SourcePrivacyInfo) {
+            accessType = ((SourcePrivacyInfo) privacyInfo).accessType;
+        } else if (privacyInfo instanceof SinkPrivacyInfo) {
+            accessType = ((SinkPrivacyInfo) privacyInfo).accessType;
+        } else {
+            return;
+        }
+            ValueFormatter yAxisLeftFormatter = new UnitValueFormatter(" times");
 //        ValueFormatter yAxisLeftFormatter = new UnitValueFormatter("times");
 
 
@@ -323,7 +358,7 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
         List<Float> accessCounterList =
                 AccessHistory.getInstance().getAccessCountersInLastWeek(accessType, ID);
 //        List<Float> accessCounterList = AccessHistory.getInstance()
-//                .getAccessCountersInLastWeek(accessType, annotationInfo.ID);
+//                .getAccessCountersInLastWeek(accessType, privacyInfo.ID);
 
         for (int i = 0; i < count; i++) {
             float val = accessCounterList.get(i);

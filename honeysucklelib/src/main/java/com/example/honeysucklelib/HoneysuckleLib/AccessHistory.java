@@ -65,7 +65,7 @@ public class AccessHistory {
     private List<Float> getAccessTimesInLastWeek(String ID) {
         ArrayList<Float> accessTimesInLastWeek = new ArrayList<>(Arrays.asList(new Float[7]));
         Collections.fill(accessTimesInLastWeek, 0f);
-        long week_begin = System.currentTimeMillis() - DataAccessRecordListAdapter.ONE_DAY_TIME * 7;
+        long week_begin = System.currentTimeMillis() - HSUtils.ONE_DAY_TIME * 7;
         ArrayList<AccessRecord> accessRecordArrayList;
         if (accessRecordMap.containsKey(ID)) {
             accessRecordArrayList = accessRecordMap.get(ID);
@@ -73,7 +73,7 @@ public class AccessHistory {
             accessRecordArrayList = new ArrayList<>();
         }
         for (AccessRecord record : accessRecordArrayList) {
-            int index = (int) ((record.beginTimestamp - week_begin) / DataAccessRecordListAdapter.ONE_DAY_TIME);
+            int index = (int) ((record.beginTimestamp - week_begin) / HSUtils.ONE_DAY_TIME);
             if (index < 7) {
                 accessTimesInLastWeek.set(index,
                         accessTimesInLastWeek.get(index) + 1);
@@ -114,11 +114,13 @@ public class AccessHistory {
 
     public class AccessRecord {
         String ID;
+        boolean isForegroundAccess;
         long beginTimestamp = -1;
         long endTimestamp = -1;
         AccessRecord (String ID, long beginTimestamp) {
             this.ID = ID;
             this.beginTimestamp = beginTimestamp;
+            this.isForegroundAccess = HSStatus.isAppInForeground;
         }
 
         void setEndTimestamp(long endTimestamp) {

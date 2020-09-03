@@ -30,18 +30,18 @@ public class PrivacyCenterActivity extends AppCompatActivity implements
             if (key == null) {
                 return;
             }
-            AnnotationInfo aggregatedAnnotationInfo = HSStatus.getMyAnnotationInfoMap().getAnnotationInfoByID(key);
-            if (aggregatedAnnotationInfo == null) {
+            SourcePrivacyInfo aggregatedPrivacyInfo = (SourcePrivacyInfo) HSStatus.getMyPrivacyInfoMap().getPrivacyInfoByID(key);
+            if (aggregatedPrivacyInfo == null) {
                 return;
             }
-            title = aggregatedAnnotationInfo.purposes[0];
+            title = aggregatedPrivacyInfo.purposes[0];
             Bundle b = new Bundle();
             b.putString(PrivacyPreferenceFragment.TITLE, title);
             b.putString(PrivacyPreferenceFragment.DATA_USE_KEY, key);
 
             privacyPreferenceFragment.setArguments(b);
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, privacyPreferenceFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.privacy_container, privacyPreferenceFragment).commit();
     }
 
 
@@ -58,7 +58,7 @@ public class PrivacyCenterActivity extends AppCompatActivity implements
         fragment.setTargetFragment(caller, 0);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_frame, fragment)
+                .replace(R.id.privacy_container, fragment)
                 .addToBackStack(null)
                 .commit();
         return true;

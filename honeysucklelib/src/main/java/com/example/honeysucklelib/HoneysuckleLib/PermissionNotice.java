@@ -63,8 +63,15 @@ public class PermissionNotice {
                 personalDataGroupList.add(permissionDataGroupMap.get(permissionString));
             }
         }
-        if (personalDataGroupList.size() > 0) {
-            showDialog(context, personalDataGroupList.toArray(new PersonalDataGroup[0]), 0, onCancelListener);
+        showAllDialog(context, personalDataGroupList.toArray(new PersonalDataGroup[0]), onCancelListener);
+    }
+
+    public static void showAllDialog(Context context, PersonalDataGroup[] personalDataGroups, DialogInterface.OnCancelListener onCancelListener) {
+        if (context == null) {
+            return;
+        }
+        if (personalDataGroups.length > 0) {
+            showDialog(context, personalDataGroups, 0, onCancelListener);
         }
     }
 
@@ -82,24 +89,15 @@ public class PermissionNotice {
         }
         PersonalDataGroup personalDataGroup = personalDataGroups[position];
 
-        AnnotationInfo [] annotationInfoList =
-                HSStatus.getMyAnnotationInfoMap().getAnnotationInfoListByDataGroup(personalDataGroup);
+        SourcePrivacyInfo[] privacyInfoList =
+                HSStatus.getMyPrivacyInfoMap().getSourcePrivacyInfoListByDataGroup(personalDataGroup);
         ArrayList<String> purposeList = new ArrayList<>();
         ArrayList<String> destinationList = new ArrayList<>();
         ArrayList<String> dataTypeList = new ArrayList<>();
         boolean dataLeaked = false;
-        for (AnnotationInfo annotationInfo : annotationInfoList) {
-            if (annotationInfo.purposes != null) {
-                purposeList.addAll(Arrays.asList(annotationInfo.purposes));
-            }
-            if (annotationInfo.leakedDataTypes != null) {
-                dataTypeList.addAll(Arrays.asList(annotationInfo.leakedDataTypes));
-            }
-            if (annotationInfo.destinations != null) {
-                destinationList.addAll(Arrays.asList(annotationInfo.destinations));
-            }
-            if (annotationInfo.dataLeaked) {
-                dataLeaked = true;
+        for (SourcePrivacyInfo privacyInfo : privacyInfoList) {
+            if (privacyInfo.purposes != null) {
+                purposeList.addAll(Arrays.asList(privacyInfo.purposes));
             }
         }
         String purposesString = HSUtils.generatePurposesString(

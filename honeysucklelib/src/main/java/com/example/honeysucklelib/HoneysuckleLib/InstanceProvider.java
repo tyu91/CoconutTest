@@ -20,10 +20,10 @@ public class InstanceProvider  extends ContentProvider implements LifecycleObser
         HSStatus.setApplicationContext(getContext());
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         try {
-            Class c = Class.forName("HoneysuckleGenerated.MyAnnotationInfoMap");
-            AnnotationInfoMap annotationInfoMap =
-                    new AnnotationInfoMap((AnnotationInfoMap) c.newInstance());
-            HSStatus.setAnnotationInfoMap(annotationInfoMap);
+            Class c = Class.forName("HoneysucklePrivacy.MyPrivacyInfoMap");
+            PrivacyInfoMap privacyInfoMap =
+                    new PrivacyInfoMap((PrivacyInfoMap) c.newInstance());
+            HSStatus.setPrivacyInfoMap(privacyInfoMap);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
@@ -33,13 +33,13 @@ public class InstanceProvider  extends ContentProvider implements LifecycleObser
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onAppBackgrounded() {
         //App in background
-        HSStatus.isAppForegrounded = false;
+        HSStatus.isAppInForeground = false;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onAppForegrounded() {
         // App in foreground
-        HSStatus.isAppForegrounded = true;
+        HSStatus.isAppInForeground = true;
     }
 
     @Nullable

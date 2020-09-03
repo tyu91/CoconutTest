@@ -88,6 +88,8 @@ public class HSUtils {
                 return lowerCase ? "notifications" : "Notifications";
             case Accessibility:
                 return lowerCase ? "accessibility events" : "Accessibility Events";
+            case SystemLogs:
+                return lowerCase ? "system logs" : "System Logs";
             default:
                 return "";
         }
@@ -158,8 +160,18 @@ public class HSUtils {
                 return R.drawable.baseline_notifications_black_18dp;
             case Accessibility:
                 return R.drawable.baseline_touch_app_black_18dp;
+            case SystemLogs:
+                return R.drawable.baseline_android_black_18dp;
             default:
                 return R.drawable.baseline_info_black_18dp;
+        }
+    }
+
+    public static String getMethodCallSignatureByStackTraceElement(StackTraceElement stackTraceElement) {
+        if (stackTraceElement != null) {
+            return String.format("%s.%s", stackTraceElement.getClassName(), stackTraceElement.getMethodName());
+        } else {
+            return "";
         }
     }
 }

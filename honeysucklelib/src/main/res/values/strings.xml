@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">HoneysuckleLib</string>
-    <string name="privacy_center_name">User Data Control</string>
+    <string name="privacy_center_name">Manage My Data</string>
     <string name="data_diagram_key">data_diagram_key</string>
 </resources>

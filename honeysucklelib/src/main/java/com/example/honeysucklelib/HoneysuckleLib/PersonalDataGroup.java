@@ -17,5 +17,6 @@ public enum  PersonalDataGroup {
     Clipboard,
     RunningApps,
     Notification,
-    Accessibility;
+    Accessibility,
+    SystemLogs;
 }
