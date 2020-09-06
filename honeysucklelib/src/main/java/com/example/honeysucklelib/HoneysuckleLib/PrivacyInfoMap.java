@@ -2,6 +2,7 @@ package com.example.honeysucklelib.HoneysuckleLib;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class PrivacyInfoMap {
@@ -13,6 +14,30 @@ public class PrivacyInfoMap {
         this.privacyInfoMap = privacyInfoMap.privacyInfoMap;
         IDToNotificationIDMap = privacyInfoMap.IDToNotificationIDMap;
     }
+
+    public void putSourcePrivacyInfo(String ID, PersonalDataGroup dataGroup,
+                                     String purpose, AccessType accessType,
+                                     JitNoticeFrequency jitNoticeFrequency,
+                                     boolean enableAccessTracker) {
+        if (privacyInfoMap == null) {
+            privacyInfoMap = new HashMap<>();
+        }
+        privacyInfoMap.put(ID, new SourcePrivacyInfo(ID, dataGroup, new String[]{purpose},
+                accessType, jitNoticeFrequency, enableAccessTracker));
+    }
+
+    public void putSinkPrivacyInfo(String ID, String[] sourceIdsOfSink, String dataGroup,
+                                     String purpose, AccessType accessType,
+                                     JitNoticeFrequency jitNoticeFrequency,
+                                   boolean enableAccessTracker) {
+        if (privacyInfoMap == null) {
+            privacyInfoMap = new HashMap<>();
+        }
+        privacyInfoMap.put(ID, new SinkPrivacyInfo(ID, sourceIdsOfSink,
+                dataGroup, new String[]{purpose},
+                accessType, jitNoticeFrequency, enableAccessTracker));
+    }
+
     public PrivacyInfo getPrivacyInfoByID(String ID) {
         return privacyInfoMap.get(ID);
     }
