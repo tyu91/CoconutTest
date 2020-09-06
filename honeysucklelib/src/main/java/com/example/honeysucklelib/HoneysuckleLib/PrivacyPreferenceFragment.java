@@ -40,6 +40,7 @@ import com.github.mikephil.charting.utils.MPPointF;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -125,26 +126,97 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
                 }
             }
         } else {
-            int xmlId = getXmlId(HSStatus.getApplicationContext(), "settings_privacy_center");
+            Context activityContext = getActivity();
+
+            PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(activityContext);
+            setPreferenceScreen(preferenceScreen);
+
             if (getArguments() != null && getArguments().containsKey(DATA_USE_KEY)) {
                 SourcePrivacyInfo privacyInfo =
                         (SourcePrivacyInfo) HSStatus.getMyPrivacyInfoMap().getPrivacyInfoByID(getArguments().getString(DATA_USE_KEY));
-                xmlId = getXmlId(HSStatus.getApplicationContext(),
-                        String.format("settings_privacy_center_%s", getArguments().get(DATA_USE_KEY)));
-                if (privacyInfo != null && privacyInfo.enableAccessTracker) {
-                    addPreferencesFromResource(xmlId);
-                } else {
-//                    xmlId = getXmlId(HSStatus.getApplicationContext(),
-//                            String.format("settings_privacy_center_%s_no_diagram", getArguments().get(DATA_USE_KEY)));
-                    addPreferencesFromResource(xmlId);
-                    Preference preference = findPreference(HSStatus.getApplicationContext().getResources().getString(R.string.data_diagram_key));
-                    if (preference != null) {
-                        getPreferenceScreen().removePreference(
-                                preference);
+                DataDiagramPreference dataDiagramPreference = new DataDiagramPreference(activityContext);
+                dataDiagramPreference.setTitle("Last week data access history");
+                dataDiagramPreference.setKey("data_diagram_key");
+                dataDiagramPreference.setLayoutResource(R.layout.data_use_history_diagram_preference);
+                dataDiagramPreference.setSelectable(false);
+                dataDiagramPreference.setCallback(() -> {
+                    barChart = dataDiagramPreference.barChart;
+                    loadChart(barChart, privacyInfo.ID);
+                });
+
+                preferenceScreen.addPreference(dataDiagramPreference);
+
+                PreferenceCategory noticeConfigPreferenceCategory = new PreferenceCategory(activityContext);
+                noticeConfigPreferenceCategory.setIconSpaceReserved(false);
+                noticeConfigPreferenceCategory.setTitle("Configure data collection alert");
+                preferenceScreen.addPreference(noticeConfigPreferenceCategory);
+
+                String noticeConfigPreferenceKey =
+                        String.format(notificationConfigKeyPattern, privacyInfo.ID);
+                ListPreference noticeConfigPreference = new ListPreference(activityContext);
+                noticeConfigPreferenceCategory.addPreference(noticeConfigPreference);
+
+                noticeConfigPreference.setKey(noticeConfigPreferenceKey);
+                noticeConfigPreference.setTitle("Alert notification frequency");
+                noticeConfigPreference.setIconSpaceReserved(false);
+                noticeConfigPreference.setEntries(R.array.notification_frequency);
+                noticeConfigPreference.setEntryValues(R.array.notification_frequency);
+                String defaultJitNoticeFrequencyString;
+                JitNoticeFrequency jitNoticeFrequency = privacyInfo.jitNoticeFrequency;
+                switch (jitNoticeFrequency) {
+                    case NOTIFICATION_ALWAYS_POP_OUT:
+                        defaultJitNoticeFrequencyString = "Always pop up";
+                        break;
+                    case NOTIFICATION_POP_OUT_FIRST_TIME_ONLY:
+                        defaultJitNoticeFrequencyString = "Pop up on first collection";
+                        break;
+                    case SEND_NOTIFICATION_SILENTLY:
+                        defaultJitNoticeFrequencyString = "Show data icon on stats bar";
+                        break;
+                    case DO_NOT_SEND_NOTIFICATION:
+                        defaultJitNoticeFrequencyString = "No alert";
+                        break;
+                    case UNKNOWN:
+                    default:
+                        defaultJitNoticeFrequencyString = "Not configured";
+                        break;
+                }
+                noticeConfigPreference.setSummary(sharedPrefs.getString(noticeConfigPreferenceKey, defaultJitNoticeFrequencyString));
+            } else {
+                Preference viewDataActivitiesPreference = new Preference(activityContext);
+                viewDataActivitiesPreference.setKey("view_data_activities");
+                viewDataActivitiesPreference.setTitle("View data activities");
+                viewDataActivitiesPreference.setIconSpaceReserved(false);
+                viewDataActivitiesPreference.setFragment("com.example.honeysucklelib.HoneysuckleLib.PrivacyPreferenceFragment");
+
+                preferenceScreen.addPreference(viewDataActivitiesPreference);
+
+                HashMap<PersonalDataGroup, ArrayList<SourcePrivacyInfo>> personalDataGroupIdHashMap = new HashMap<>();
+                for (Map.Entry<String, PrivacyInfo> entry : HSStatus.getMyPrivacyInfoMap().privacyInfoMap.entrySet()) {
+                    if (entry.getValue() instanceof SourcePrivacyInfo) {
+                        SourcePrivacyInfo sourcePrivacyInfo = (SourcePrivacyInfo) entry.getValue();
+                        if (!personalDataGroupIdHashMap.containsKey(sourcePrivacyInfo.dataGroup)) {
+                            personalDataGroupIdHashMap.put(sourcePrivacyInfo.dataGroup, new ArrayList<>());
+                        }
+                        personalDataGroupIdHashMap.get(sourcePrivacyInfo.dataGroup).add(sourcePrivacyInfo);
                     }
                 }
-            } else {
-                addPreferencesFromResource(xmlId);
+                for (Map.Entry<PersonalDataGroup, ArrayList<SourcePrivacyInfo>> entry : personalDataGroupIdHashMap.entrySet()) {
+                    PreferenceCategory preferenceCategory = new PreferenceCategory(activityContext);
+                    preferenceCategory.setTitle(HSUtils.getDataString(entry.getKey(), false));
+                    preferenceCategory.setIconSpaceReserved(false);
+                    preferenceScreen.addPreference(preferenceCategory);
+
+                    ArrayList<SourcePrivacyInfo> privacyInfoList = entry.getValue();
+                    for (SourcePrivacyInfo sourcePrivacyInfo : privacyInfoList) {
+                        Preference preference = new Preference(activityContext);
+                        preferenceCategory.addPreference(preference);
+                        preference.setTitle(sourcePrivacyInfo.purposes[0]);
+                        preference.setKey(sourcePrivacyInfo.ID);
+                        preference.setIconSpaceReserved(false);
+                        preference.setFragment("com.example.honeysucklelib.HoneysuckleLib.PrivacyPreferenceFragment");
+                    }
+                }
             }
         }
     }
@@ -157,7 +229,7 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setTitleAndChart();
+        setTitleAndPreference();
     }
 
     @Override
@@ -165,7 +237,7 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
 //        setTitleAndChart();
     }
 
-    private void setTitleAndChart() {
+    private void setTitleAndPreference() {
 
 //        String title = "Data use overview & control";
 //        String title = "Control data collected by the app";
@@ -175,41 +247,7 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
             String ID = getArguments().getString(DATA_USE_KEY);
             SourcePrivacyInfo privacyInfo =
                     (SourcePrivacyInfo) HSStatus.getMyPrivacyInfoMap().getPrivacyInfoByID(ID);
-            DataDiagramPreference diagramPreference = findPreference(getResources().getString(R.string.data_diagram_key));
-            if (diagramPreference != null) {
-                diagramPreference.setCallback(() -> {
-                    barChart = diagramPreference.barChart;
-                    loadChart(barChart, ID);
-                });
-            }
-            String noticeConfigPreferenceKey =
-                    String.format(notificationConfigKeyPattern, getArguments().get(DATA_USE_KEY));
-            ListPreference noticeConfigPreference = findPreference(noticeConfigPreferenceKey);
-            if (noticeConfigPreference != null) {
-                String defaultJitNoticeFrequencyString = "Not configured";
-                if (privacyInfo != null) {
-                    JitNoticeFrequency jitNoticeFrequency = privacyInfo.jitNoticeFrequency;
-                    switch (jitNoticeFrequency) {
-                        case NOTIFICATION_ALWAYS_POP_OUT:
-                            defaultJitNoticeFrequencyString = "Always pop up";
-                            break;
-                        case NOTIFICATION_POP_OUT_FIRST_TIME_ONLY:
-                            defaultJitNoticeFrequencyString = "Pop up on first collection";
-                            break;
-                        case SEND_NOTIFICATION_SILENTLY:
-                            defaultJitNoticeFrequencyString = "Show data icon on stats bar";
-                            break;
-                        case DO_NOT_SEND_NOTIFICATION:
-                            defaultJitNoticeFrequencyString = "No alert";
-                            break;
-                        case UNKNOWN:
-                        default:
-                            defaultJitNoticeFrequencyString = "Not configured";
-                            break;
-                    }
-                }
-                noticeConfigPreference.setSummary(sharedPrefs.getString(noticeConfigPreferenceKey, defaultJitNoticeFrequencyString));
-            }
+
             if (privacyInfo != null) {
                 title = String.format("%s (%s)", HSUtils.getDataString(privacyInfo.dataGroup, false), getArguments().getString(TITLE).toLowerCase());
             } else {
