@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.SwitchPreference;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
@@ -46,7 +48,8 @@ import java.util.Map;
 
 import com.example.honeysucklelib.R;
 
-import static com.example.honeysucklelib.HoneysuckleLib.HSUtils.notificationConfigKeyPattern;
+import static com.example.honeysucklelib.HoneysuckleLib.HSUtils.accessTrackerConfigKeyPattern;
+import static com.example.honeysucklelib.HoneysuckleLib.HSUtils.jitNotificationConfigKeyPattern;
 
 public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final long ONE_DAY_TIME = 24 * 60 * 60 * 1000;
@@ -94,34 +97,42 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
                     Preference preference = new Preference(activityContext);
                     if (privacyInfo instanceof SourcePrivacyInfo) {
                         SourcePrivacyInfo sourcePrivacyInfo = (SourcePrivacyInfo) privacyInfo;
-                        preference.setTitle(String.format("Accessed %s",
-                                HSUtils.getDataString(sourcePrivacyInfo.dataGroup, true)));
-                        preference.setSummary(String.format("%s\nData collected %s",
-                                sourcePrivacyInfo.purposes[0],
-                                HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
-                        preference.setIcon(HSUtils.getDataGroupIconId(sourcePrivacyInfo.dataGroup));
-                        preference.setSelectable(false);
-                        recentPreferenceCategory.addPreference(preference);
+                        if (sharedPrefs.getBoolean(
+                                String.format(accessTrackerConfigKeyPattern, sourcePrivacyInfo.ID),
+                                sourcePrivacyInfo.enableAccessTracker)) {
+                            preference.setTitle(String.format("Accessed %s",
+                                    HSUtils.getDataString(sourcePrivacyInfo.dataGroup, true)));
+                            preference.setSummary(String.format("%s\nData collected %s",
+                                    sourcePrivacyInfo.purposes[0],
+                                    HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
+                            preference.setIcon(HSUtils.getDataGroupIconId(sourcePrivacyInfo.dataGroup));
+                            preference.setSelectable(false);
+                            recentPreferenceCategory.addPreference(preference);
+                        }
                     } else if (privacyInfo instanceof SinkPrivacyInfo) {
                         SinkPrivacyInfo sinkPrivacyInfo = (SinkPrivacyInfo) privacyInfo;
-                        if (sinkPrivacyInfo.accessType == AccessType.STORED_ON_DEVICE) {
-                            preference.setTitle(String.format("Stored %s on device", sinkPrivacyInfo.dataGroup.toLowerCase()));
-                            preference.setSummary(String.format("%s\nData stored %s",
-                                    sinkPrivacyInfo.purposes[0],
-                                    HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
-                        } else if (sinkPrivacyInfo.accessType == AccessType.STORED_ON_CLOUD) {
-                            preference.setTitle(String.format("Stored %s on cloud", sinkPrivacyInfo.dataGroup.toLowerCase()));
-                            preference.setSummary(String.format("%s\nData stored %s",
-                                    sinkPrivacyInfo.purposes[0],
-                                    HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
-                        } else if (sinkPrivacyInfo.accessType == AccessType.SENT_OFF_DEVICE) {
-                            preference.setTitle(String.format("Sent %s off device", sinkPrivacyInfo.dataGroup.toLowerCase()));
-                            preference.setSummary(String.format("%s\nData sent out %s",
-                                    sinkPrivacyInfo.purposes[0],
-                                    HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
+                        if (sharedPrefs.getBoolean(
+                                String.format(accessTrackerConfigKeyPattern, sinkPrivacyInfo.ID),
+                                sinkPrivacyInfo.enableAccessTracker)) {
+                            if (sinkPrivacyInfo.accessType == AccessType.STORED_ON_DEVICE) {
+                                preference.setTitle(String.format("Stored %s on device", sinkPrivacyInfo.dataGroup.toLowerCase()));
+                                preference.setSummary(String.format("%s\nData stored %s",
+                                        sinkPrivacyInfo.purposes[0],
+                                        HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
+                            } else if (sinkPrivacyInfo.accessType == AccessType.STORED_ON_CLOUD) {
+                                preference.setTitle(String.format("Stored %s on cloud", sinkPrivacyInfo.dataGroup.toLowerCase()));
+                                preference.setSummary(String.format("%s\nData stored %s",
+                                        sinkPrivacyInfo.purposes[0],
+                                        HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
+                            } else if (sinkPrivacyInfo.accessType == AccessType.SENT_OFF_DEVICE) {
+                                preference.setTitle(String.format("Sent %s off device", sinkPrivacyInfo.dataGroup.toLowerCase()));
+                                preference.setSummary(String.format("%s\nData sent out %s",
+                                        sinkPrivacyInfo.purposes[0],
+                                        HSUtils.getRelativeOrAbsoluteTimeString(accessRecord.beginTimestamp)));
+                            }
+                            preference.setSelectable(false);
+                            recentPreferenceCategory.addPreference(preference);
                         }
-                        preference.setSelectable(false);
-                        recentPreferenceCategory.addPreference(preference);
                     }
                 }
             }
@@ -148,44 +159,115 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
 
                 PreferenceCategory noticeConfigPreferenceCategory = new PreferenceCategory(activityContext);
                 noticeConfigPreferenceCategory.setIconSpaceReserved(false);
-                noticeConfigPreferenceCategory.setTitle("Configure data collection alert");
+                noticeConfigPreferenceCategory.setTitle("Configure alert notification frequency");
                 preferenceScreen.addPreference(noticeConfigPreferenceCategory);
 
-                String noticeConfigPreferenceKey =
-                        String.format(notificationConfigKeyPattern, privacyInfo.ID);
-                ListPreference noticeConfigPreference = new ListPreference(activityContext);
-                noticeConfigPreferenceCategory.addPreference(noticeConfigPreference);
+                String sourceNoticeConfigPreferenceKey =
+                        String.format(jitNotificationConfigKeyPattern, privacyInfo.ID);
+                ListPreference sourceNoticeConfigPreference = new ListPreference(activityContext);
+                noticeConfigPreferenceCategory.addPreference(sourceNoticeConfigPreference);
 
-                noticeConfigPreference.setKey(noticeConfigPreferenceKey);
-                noticeConfigPreference.setTitle("Alert notification frequency");
-                noticeConfigPreference.setIconSpaceReserved(false);
-                noticeConfigPreference.setEntries(R.array.notification_frequency);
-                noticeConfigPreference.setEntryValues(R.array.notification_frequency);
-                String defaultJitNoticeFrequencyString;
-                JitNoticeFrequency jitNoticeFrequency = privacyInfo.jitNoticeFrequency;
-                switch (jitNoticeFrequency) {
+                sourceNoticeConfigPreference.setKey(sourceNoticeConfigPreferenceKey);
+                sourceNoticeConfigPreference.setTitle("Accessed " + privacyInfo.purposes[0].toLowerCase());
+                sourceNoticeConfigPreference.setIconSpaceReserved(false);
+                sourceNoticeConfigPreference.setEntries(R.array.notification_frequency);
+                sourceNoticeConfigPreference.setEntryValues(R.array.notification_frequency);
+                String defaultSourceJitNoticeFrequencyString;
+                JitNoticeFrequency sourceJitNoticeFrequency = privacyInfo.jitNoticeFrequency;
+                switch (sourceJitNoticeFrequency) {
                     case NOTIFICATION_ALWAYS_POP_OUT:
-                        defaultJitNoticeFrequencyString = "Always pop up";
+                        defaultSourceJitNoticeFrequencyString = "Always pop up";
                         break;
                     case NOTIFICATION_POP_OUT_FIRST_TIME_ONLY:
-                        defaultJitNoticeFrequencyString = "Pop up on first collection";
+                        defaultSourceJitNoticeFrequencyString = "Pop up on first collection";
                         break;
                     case SEND_NOTIFICATION_SILENTLY:
-                        defaultJitNoticeFrequencyString = "Show data icon on stats bar";
+                        defaultSourceJitNoticeFrequencyString = "Show data icon on stats bar";
                         break;
                     case DO_NOT_SEND_NOTIFICATION:
-                        defaultJitNoticeFrequencyString = "No alert";
+                        defaultSourceJitNoticeFrequencyString = "No alert";
                         break;
                     case UNKNOWN:
                     default:
-                        defaultJitNoticeFrequencyString = "Not configured";
+                        defaultSourceJitNoticeFrequencyString = "Not configured";
                         break;
                 }
-                noticeConfigPreference.setSummary(sharedPrefs.getString(noticeConfigPreferenceKey, defaultJitNoticeFrequencyString));
+                sourceNoticeConfigPreference.setSummary(sharedPrefs.getString(sourceNoticeConfigPreferenceKey, defaultSourceJitNoticeFrequencyString));
+
+                ArrayList<SinkPrivacyInfo> sinkInfoList = HSStatus.getMyPrivacyInfoMap().getSinkIDsBySourceID(privacyInfo.ID);
+
+                for (SinkPrivacyInfo sinkPrivacyInfo : sinkInfoList) {
+                    String sinkNoticeConfigPreferenceKey =
+                            String.format(jitNotificationConfigKeyPattern, sinkPrivacyInfo.ID);
+                    ListPreference sinkNoticeConfigPreference = new ListPreference(activityContext);
+                    noticeConfigPreferenceCategory.addPreference(sinkNoticeConfigPreference);
+
+                    sinkNoticeConfigPreference.setKey(sinkNoticeConfigPreferenceKey);
+                    sinkNoticeConfigPreference.setTitle(
+                            sinkPrivacyInfo.accessType == AccessType.SENT_OFF_DEVICE ?
+                                    "Sent off device " : "Stored "
+                                    + sinkPrivacyInfo.purposes[0].toLowerCase());
+                    sinkNoticeConfigPreference.setIconSpaceReserved(false);
+                    sinkNoticeConfigPreference.setEntries(R.array.notification_frequency);
+                    sinkNoticeConfigPreference.setEntryValues(R.array.notification_frequency);
+                    String defaultSinkJitNoticeFrequencyString;
+                    JitNoticeFrequency sinkJitNoticeFrequency = sinkPrivacyInfo.jitNoticeFrequency;
+                    switch (sinkJitNoticeFrequency) {
+                        case NOTIFICATION_ALWAYS_POP_OUT:
+                            defaultSinkJitNoticeFrequencyString = "Always pop up";
+                            break;
+                        case NOTIFICATION_POP_OUT_FIRST_TIME_ONLY:
+                            defaultSinkJitNoticeFrequencyString = "Pop up on first collection";
+                            break;
+                        case SEND_NOTIFICATION_SILENTLY:
+                            defaultSinkJitNoticeFrequencyString = "Show data icon on stats bar";
+                            break;
+                        case DO_NOT_SEND_NOTIFICATION:
+                            defaultSinkJitNoticeFrequencyString = "No alert";
+                            break;
+                        case UNKNOWN:
+                        default:
+                            defaultSinkJitNoticeFrequencyString = "Not configured";
+                            break;
+                    }
+                    sinkNoticeConfigPreference.setSummary(sharedPrefs.getString(sinkNoticeConfigPreferenceKey, defaultSinkJitNoticeFrequencyString));
+                }
+
+                PreferenceCategory activityConfigPreferenceCategory = new PreferenceCategory(activityContext);
+                activityConfigPreferenceCategory.setIconSpaceReserved(false);
+                activityConfigPreferenceCategory.setTitle("Configure data use history");
+                preferenceScreen.addPreference(activityConfigPreferenceCategory);
+
+                String accessTrackerConfigPreferenceKey =
+                        String.format(accessTrackerConfigKeyPattern, privacyInfo.ID);
+                SwitchPreference accessTrackerConfigPreference = new SwitchPreference(activityContext);
+                activityConfigPreferenceCategory.addPreference(accessTrackerConfigPreference);
+                accessTrackerConfigPreference.setKey(accessTrackerConfigPreferenceKey);
+                accessTrackerConfigPreference.setTitle(String.format("Show %s accessed %s events",
+                        HSUtils.getDataString(privacyInfo.dataGroup, true), privacyInfo.purposes[0].toLowerCase()));
+                accessTrackerConfigPreference.setChecked(
+                        sharedPrefs.getBoolean(accessTrackerConfigPreferenceKey,
+                                privacyInfo.enableAccessTracker));
+                accessTrackerConfigPreference.setIconSpaceReserved(false);
+
+                for (SinkPrivacyInfo sinkPrivacyInfo : sinkInfoList) {
+                    String sinkConfigPreferenceKey =
+                            String.format(accessTrackerConfigKeyPattern, sinkPrivacyInfo.ID);
+                    SwitchPreference sinkConfigPreference = new SwitchPreference(activityContext);
+                    activityConfigPreferenceCategory.addPreference(sinkConfigPreference);
+                    sinkConfigPreference.setKey(sinkConfigPreferenceKey);
+                    sinkConfigPreference.setTitle(String.format("Show %s %s %s events",
+                            sinkPrivacyInfo.dataGroup.toLowerCase(),
+                            sinkPrivacyInfo.accessType == AccessType.SENT_OFF_DEVICE ? "sent off device" : "stored",
+                            sinkPrivacyInfo.purposes[0].toLowerCase()));
+                    sinkConfigPreference.setChecked(
+                            sharedPrefs.getBoolean(sinkConfigPreferenceKey, sinkPrivacyInfo.enableAccessTracker));
+                    sinkConfigPreference.setIconSpaceReserved(false);
+                }
             } else {
                 Preference viewDataActivitiesPreference = new Preference(activityContext);
                 viewDataActivitiesPreference.setKey("view_data_activities");
-                viewDataActivitiesPreference.setTitle("View data activities");
+                viewDataActivitiesPreference.setTitle("View data use history");
                 viewDataActivitiesPreference.setIconSpaceReserved(false);
                 viewDataActivitiesPreference.setFragment("com.example.honeysucklelib.HoneysuckleLib.PrivacyPreferenceFragment");
 
@@ -258,20 +340,17 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
                     HSStatus.getMyPrivacyInfoMap().privacyInfoMap.entrySet()) {
                 String ID = entry.getKey();
                 if (entry.getValue() instanceof SourcePrivacyInfo) {
-                    SourcePrivacyInfo sourcePrivacyInfo = (SourcePrivacyInfo) entry.getValue();
                     Preference preference = findPreference(ID);
                     if (preference != null) {
-                        if (sourcePrivacyInfo.enableAccessTracker) {
-                            AccessHistory.AccessRecord record =
-                                    AccessHistory.getInstance().getMostRecentAccessRecord(ID);
-                            if (record == null) {
-                                preference.setSummary("Never accessed");
-                            } else {
-                                String currentTime = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm",
-                                        HSStatus.getApplicationContext().getResources().getConfiguration().locale)
-                                        .format(new java.util.Date(record.beginTimestamp));
-                                preference.setSummary(String.format("Last accessed at %s", currentTime));
-                            }
+                        AccessHistory.AccessRecord record =
+                                AccessHistory.getInstance().getMostRecentAccessRecord(ID);
+                        if (record == null) {
+                            preference.setSummary("Never accessed");
+                        } else {
+                            String currentTime = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm",
+                                    HSStatus.getApplicationContext().getResources().getConfiguration().locale)
+                                    .format(new java.util.Date(record.beginTimestamp));
+                            preference.setSummary(String.format("Last accessed at %s", currentTime));
                         }
                     }
                 }

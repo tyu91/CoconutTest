@@ -25,7 +25,7 @@ import static com.example.honeysucklelib.HoneysuckleLib.AccessType.RECURRING_COL
 import static com.example.honeysucklelib.HoneysuckleLib.AccessType.SENT_OFF_DEVICE;
 import static com.example.honeysucklelib.HoneysuckleLib.AccessType.STORED_ON_CLOUD;
 import static com.example.honeysucklelib.HoneysuckleLib.AccessType.STORED_ON_DEVICE;
-import static com.example.honeysucklelib.HoneysuckleLib.HSUtils.notificationConfigKeyPattern;
+import static com.example.honeysucklelib.HoneysuckleLib.HSUtils.jitNotificationConfigKeyPattern;
 
 public class HSNotificationUtils {
     private static int notificationID = 1000;
@@ -34,7 +34,7 @@ public class HSNotificationUtils {
         JitNoticeFrequency jitNoticeFrequency = defaultValue;
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(HSStatus.getApplicationContext());
         String userSetJitNoticeFrequencyString =
-                sharedPref.getString(String.format(notificationConfigKeyPattern, ID), "Not configured");
+                sharedPref.getString(String.format(jitNotificationConfigKeyPattern, ID), "Not configured");
         if ("Always pop up".equals(userSetJitNoticeFrequencyString)) {
             jitNoticeFrequency = JitNoticeFrequency.NOTIFICATION_ALWAYS_POP_OUT;
         } else if ("Pop up on first collection".equals(userSetJitNoticeFrequencyString)) {
