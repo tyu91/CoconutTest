@@ -41,6 +41,7 @@ import com.github.mikephil.charting.utils.MPPointF;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -424,10 +425,16 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
             return;
         }
         AccessType accessType;
+        String dataGroup;
+        String purpose;
         if (privacyInfo instanceof SourcePrivacyInfo) {
             accessType = ((SourcePrivacyInfo) privacyInfo).accessType;
+            purpose = ((SourcePrivacyInfo) privacyInfo).purposes[0];
+            dataGroup = HSUtils.getDataString(((SourcePrivacyInfo) privacyInfo).dataGroup, true);
         } else if (privacyInfo instanceof SinkPrivacyInfo) {
             accessType = ((SinkPrivacyInfo) privacyInfo).accessType;
+            purpose = ((SinkPrivacyInfo) privacyInfo).purposes[0];
+            dataGroup = ((SinkPrivacyInfo) privacyInfo).dataGroup.toLowerCase();
         } else {
             return;
         }
@@ -483,10 +490,11 @@ public class PrivacyPreferenceFragment extends PreferenceFragmentCompat implemen
             values.add(new BarEntry(start + i, val));
         }
 
-        BarDataSet set1 = new BarDataSet(values, "Foreground access to text input for this purpose");
 
-        int startColor1 = ContextCompat.getColor(getContext(), android.R.color.holo_blue_light);
-        int endColor1 = ContextCompat.getColor(getContext(), android.R.color.holo_blue_light);
+        BarDataSet set1 = new BarDataSet(values, String.format("Foreground access to %s %s", dataGroup, purpose));
+
+        int startColor1 = ContextCompat.getColor(getContext(), android.R.color.darker_gray);
+        int endColor1 = ContextCompat.getColor(getContext(), android.R.color.darker_gray);
 
         List<GradientColor> gradientColors = new ArrayList<>();
         gradientColors.add(new GradientColor(startColor1, endColor1));
