@@ -141,7 +141,7 @@ public class HSNotificationUtils {
                 .setStyle(new Notification.BigTextStyle()
                         .bigText(styledText))
                 .setSmallIcon(notificationSmallIcon)
-                .addAction(R.drawable.ic_launcher_foreground, "View data controls", pendingIntent)
+                .addAction(R.drawable.ic_launcher_foreground, "View more settings", pendingIntent)
                 .addAction(R.drawable.ic_launcher_foreground, "Don't show this again", pendingIntent);
 //                .addAction(R.drawable.ic_launcher_foreground, "Privacy Notice Settings", pendingIntent) // TODO: make this optional and dependent on whether the developer embed the privacy notice settings in the app
         if (jitNoticeFrequency == JitNoticeFrequency.NOTIFICATION_ALWAYS_POP_OUT ||
